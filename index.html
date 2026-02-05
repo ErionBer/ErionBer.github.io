@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Portfolio | Science des Données</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .blur-bg { backdrop-filter: blur(12px); }
+        .hidden-content { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 overflow-x-hidden">
+
+    <!-- ÉCRAN DE VERROUILLAGE (S'affiche en premier) -->
+    <div id="lock-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950 p-4">
+        <div class="max-w-md w-full bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl text-center fade-in">
+            <div class="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="lock" class="text-blue-500 w-8 h-8"></i>
+            </div>
+            <h1 class="text-2xl font-bold mb-2">Portfolio Privé</h1>
+            <p class="text-slate-400 text-sm mb-8">Veuillez entrer le code d'accès fourni sur le CV pour consulter mes travaux en Science des Données.</p>
+            
+            <div class="space-y-4">
+                <input type="password" id="access-code" placeholder="Code d'accès" 
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition text-center tracking-widest">
+                <button onclick="checkAccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition flex items-center justify-center gap-2">
+                    Accéder au portfolio <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <p id="error-msg" class="text-red-500 text-xs mt-4 opacity-0 transition">Code incorrect. Veuillez réessayer.</p>
+        </div>
+    </div>
+
+    <!-- CONTENU DU PORTFOLIO (Caché par défaut) -->
+    <div id="main-content" class="hidden-content flex flex-col min-h-screen bg-slate-50 text-slate-900">
+        <!-- NAVBAR -->
+        <nav class="bg-white/80 border-b border-gray-200 sticky top-0 z-50 blur-bg">
+            <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+                <div class="font-bold text-xl text-slate-900 flex items-center gap-2">
+                    <i data-lucide="database" class="text-blue-600"></i>
+                    <span id="nav-name">Portfolio SD</span>
+                </div>
+                <button onclick="lockAgain()" class="text-slate-500 hover:text-red-600 transition flex items-center gap-1 text-sm">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Quitter
+                </button>
+            </div>
+        </nav>
+
+        <!-- HEADER -->
+        <header class="py-16 px-4 bg-white">
+            <div class="max-w-4xl mx-auto text-center">
+                <img id="profile-img" src="" class="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-slate-50 shadow-lg object-cover">
+                <h2 id="hero-name" class="text-4xl font-extrabold mb-2"></h2>
+                <p id="hero-title" class="text-blue-600 font-semibold mb-6 uppercase tracking-wider text-sm"></p>
+                <p id="hero-bio" class="text-slate-600 leading-relaxed max-w-2xl mx-auto"></p>
+            </div>
+        </header>
+
+        <!-- SECTIONS (PROJETS & COMPETENCES) -->
+        <main class="max-w-6xl mx-auto px-4 py-12 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                
+                <!-- COLONNE GAUCHE : COMPETENCES -->
+                <aside class="lg:col-span-1 space-y-8">
+                    <div>
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2 border-b pb-2"><i data-lucide="terminal" class="w-5 h-5"></i> Stack Technique</h3>
+                        <div id="skills-list" class="space-y-4"></div>
+                    </div>
+                </aside>
+
+                <!-- COLONNE DROITE : PROJETS -->
+                <section class="lg:col-span-2">
+                    <h3 class="font-bold text-lg mb-6 flex items-center gap-2 border-b pb-2"><i data-lucide="folder-kanban" class="w-5 h-5"></i> Projets Réalisés</h3>
+                    <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                </section>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="mt-auto bg-slate-900 text-slate-400 py-10 px-4">
+            <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <p class="font-bold text-white mb-1">Contact Professionnel</p>
+                    <p id="footer-email"></p>
+                </div>
+                <div class="flex gap-4">
+                    <a id="link-linkedin" href="#" class="bg-slate-800 p-3 rounded-full hover:bg-blue-600 transition"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                    <a id="link-github" href="#" class="bg-slate-800 p-3 rounded-full hover:bg-slate-700 transition"><i data-lucide="github" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        /**
+         * ====================================================================
+         * ⚙️ CONFIGURATION : MODIFIEZ VOS INFOS ET LE MOT DE PASSE ICI
+         * ====================================================================
+         */
+        const CONFIG = {
+            accessCode: "DATA2026", // <--- C'EST LE CODE POUR ENTRER SUR LE SITE
+            
+            profile: {
+                name: "Alexandre Dupont",
+                title: "BUT Science des Données - Spé. Visualisation",
+                bio: "Analyste de données en formation. Je maîtrise le cycle de vie de la donnée : de l'extraction SQL au déploiement de modèles prédictifs sous Python.",
+                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?fit=crop&w=300&h=300",
+                email: "alexandre.dupont@etu.univ.fr",
+                linkedin: "#",
+                github: "#"
+            },
+
+            skills: [
+                { cat: "Langages", techs: "Python, R, SQL" },
+                { cat: "Data Science", techs: "Pandas, Scikit-Learn, NumPy" },
+                { cat: "Visualisation", techs: "PowerBI, Tableau, Seaborn" },
+                { cat: "Outils", techs: "Git, Docker, Jupyter" }
+            ],
+
+            projects: [
+                {
+                    title: "Analyse Prédictive Churn",
+                    desc: "Détection des départs clients pour une banque. Random Forest (Précision 92%).",
+                    tags: ["Python", "ML"],
+                    img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=600&h=350"
+                },
+                {
+                    title: "Optimisation de Stocks",
+                    desc: "Analyse SQL de 500k transactions pour optimiser le réapprovisionnement.",
+                    tags: ["SQL", "Stats"],
+                    img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?fit=crop&w=600&h=350"
+                }
+            ]
+        };
+
+        // --- LOGIQUE D'ACCÈS ---
+        function checkAccess() {
+            const input = document.getElementById('access-code').value;
+            const error = document.getElementById('error-msg');
+            
+            if(input === CONFIG.accessCode) {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('main-content').classList.remove('hidden-content');
+                document.body.classList.remove('bg-slate-900');
+                initPortfolio();
+            } else {
+                error.style.opacity = '1';
+                setTimeout(() => { error.style.opacity = '0'; }, 2000);
+            }
+        }
+
+        // Permettre la touche "Entrée"
+        document.getElementById('access-code').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') checkAccess();
+        });
+
+        function lockAgain() {
+            window.location.reload();
+        }
+
+        // --- RENDU DU PORTFOLIO ---
+        function initPortfolio() {
+            lucide.createIcons();
+            
+            // Infos
+            document.getElementById('nav-name').textContent = CONFIG.profile.name;
+            document.getElementById('hero-name').textContent = CONFIG.profile.name;
+            document.getElementById('hero-title').textContent = CONFIG.profile.title;
+            document.getElementById('hero-bio').textContent = CONFIG.profile.bio;
+            document.getElementById('profile-img').src = CONFIG.profile.image;
+            document.getElementById('footer-email').textContent = CONFIG.profile.email;
+            document.getElementById('link-linkedin').href = CONFIG.profile.linkedin;
+            document.getElementById('link-github').href = CONFIG.profile.github;
+
+            // Compétences
+            const skillContainer = document.getElementById('skills-list');
+            skillContainer.innerHTML = CONFIG.skills.map(s => `
+                <div class="p-4 bg-white border border-slate-100 rounded-xl shadow-sm">
+                    <p class="text-xs font-bold text-blue-600 uppercase mb-1">${s.cat}</p>
+                    <p class="text-slate-700 font-medium">${s.techs}</p>
+                </div>
+            `).join('');
+
+            // Projets
+            const projectGrid = document.getElementById('projects-grid');
+            projectGrid.innerHTML = CONFIG.projects.map(p => `
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm group">
+                    <img src="${p.img}" class="w-full h-40 object-cover group-hover:scale-105 transition duration-500">
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-900 mb-2">${p.title}</h4>
+                        <p class="text-slate-500 text-sm mb-4">${p.desc}</p>
+                        <div class="flex gap-2">
+                            ${p.tags.map(t => `<span class="text-[10px] px-2 py-1 bg-slate-100 rounded font-bold text-slate-400 uppercase tracking-tighter">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // Pour que les icônes sur l'écran de verrouillage s'affichent
+        lucide.createIcons();
+    </script>
+</body>
+</html>
