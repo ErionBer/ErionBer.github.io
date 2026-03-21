@@ -52,33 +52,10 @@
         .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.3); }
         .dark .glass { background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        /* --- STYLES WYSIWYG (Éditeur Inline) --- */
-        .inline-dropzone { 
-            height: 12px; transition: all 0.2s; border-radius: 4px; opacity: 0; 
-            margin: -6px 0; z-index: 10; position: relative;
-        }
-        .admin-mode .inline-dropzone { opacity: 0.1; border: 2px dashed transparent; }
-        .admin-mode .inline-dropzone.drag-over { 
-            height: 40px; opacity: 1; border-color: #6366f1; background-color: rgba(99, 102, 241, 0.1); margin: 4px 0; 
-        }
-        
-        .editable-text[contenteditable="true"] {
-            outline: 2px dashed transparent; outline-offset: 4px; transition: outline 0.2s; padding: 4px; border-radius: 4px;
-        }
-        .editable-text[contenteditable="true"]:hover { outline-color: rgba(99, 102, 241, 0.3); }
-        .editable-text[contenteditable="true"]:focus { outline-color: #6366f1; background: rgba(99, 102, 241, 0.02); }
-
-        /* Poignée de redimensionnement pour les images */
-        .resize-handle {
-            position: absolute; bottom: 0; right: 0; width: 24px; height: 24px;
-            background: linear-gradient(135deg, transparent 50%, #4f46e5 50%);
-            cursor: nwse-resize; opacity: 0; transition: opacity 0.2s; z-index: 20;
-            border-bottom-right-radius: 0.75rem;
-        }
-        .admin-mode .group:hover .resize-handle:not(.locked-handle) { opacity: 1; }
-        .locked-wrapper { outline: 3px solid #ef4444 !important; outline-offset: 2px; }
-        
-        .dragging-active { opacity: 0.4; }
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
 <body class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950 h-screen flex flex-col overflow-hidden admin-mode transition-colors duration-300">
@@ -119,7 +96,7 @@
         </div>
     </nav>
 
-    <main class="flex-1 overflow-y-auto p-4 md:p-8 relative scroll-smooth custom-scrollbar" id="main-scroll-area">
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 relative scroll-smooth custom-scrollbar">
         <div class="max-w-5xl mx-auto min-h-full">
 
             <!-- ONGLET PROJETS -->
@@ -147,19 +124,11 @@
                 </div>
                 <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-                <!-- VUE DÉTAILLÉE D'UN PROJET (WYSIWYG INLINE) -->
+                <!-- VUE DÉTAILLÉE D'UN PROJET -->
                 <div id="project-detail-view" class="hidden animate-slide-up">
-                    <div class="flex justify-between items-center mb-6">
-                        <button onclick="hideProjectDetails()" class="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-bold bg-white dark:bg-slate-900 px-4 py-2 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 w-fit">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="backToProj">Retour aux projets</span>
-                        </button>
-                        
-                        <div class="admin-only gap-2 items-center">
-                            <span class="text-xs bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold border border-red-200 flex items-center gap-2">
-                                <i data-lucide="edit" class="w-4 h-4"></i> Éditeur Inline Actif
-                            </span>
-                        </div>
-                    </div>
+                    <button onclick="hideProjectDetails()" class="mb-6 flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition font-bold bg-white dark:bg-slate-900 px-4 py-2 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 w-fit">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="backToProj">Retour aux projets</span>
+                    </button>
                     
                     <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col">
                         <div id="detail-gallery-container" class="w-full bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 relative group hidden">
@@ -187,37 +156,15 @@
                                 </div>
                             </div>
                             
-                            <!-- Dashboard Interactif -->
+                            <!-- Conteneur pour Dashboard Interactif -->
                             <div id="detail-embed-container" class="w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 mb-10 shadow-lg hidden">
                                 <iframe id="detail-embed-iframe" title="Interactive Dashboard" src="" class="w-full h-full border-0" allowFullScreen="true"></iframe>
                             </div>
                             
-                            <!-- ÉDITEUR WYSIWYG INLINE -->
-                            <div class="bg-white dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800 py-8 mb-10 relative">
-                                <h4 class="font-bold text-slate-400 uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
-                                    <i data-lucide="align-left" class="w-4 h-4"></i> <span data-i18n="description">Détails de l'Étude de Cas</span>
-                                </h4>
-                                
-                                <div class="admin-only mb-6 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 text-xs p-3 rounded-lg border border-blue-200 dark:border-blue-800/50 flex gap-2 items-start">
-                                    <i data-lucide="info" class="w-4 h-4 shrink-0 mt-0.5"></i>
-                                    <p>Cliquez sur les textes pour les éditer. Glissez-déposez les images pour les déplacer. <strong>Ctrl+V</strong> n'importe où pour coller une image. Utilisez le coin bas-droite d'une image pour la redimensionner.</p>
-                                </div>
-
-                                <!-- Contenu WYSIWYG -->
-                                <div id="detail-blocks-container" class="w-full text-slate-700 dark:text-slate-300 clearfix relative min-h-[100px]">
-                                    <!-- Blocs injectés ici -->
-                                </div>
-
-                                <!-- Barre d'ajout rapide (Admin) en fin de document -->
-                                <div class="admin-only flex gap-3 mt-8 pt-6 border-t border-dashed border-slate-200 dark:border-slate-700 justify-center">
-                                    <button onclick="inlineAddBlock('text')" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-full text-sm font-bold transition flex items-center gap-2 shadow-sm">
-                                        <i data-lucide="type" class="w-4 h-4"></i> Ajouter Texte
-                                    </button>
-                                    <button onclick="document.getElementById('inline-global-upload').click()" class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-bold transition flex items-center gap-2 shadow-sm">
-                                        <i data-lucide="image-plus" class="w-4 h-4"></i> Ajouter Image
-                                    </button>
-                                    <input type="file" id="inline-global-upload" accept="image/*" class="hidden" onchange="inlineHandleUpload(event)">
-                                </div>
+                            <!-- Zone fusionnée de Description -->
+                            <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 p-6 md:p-8 rounded-2xl mb-10">
+                                <h4 class="font-bold text-blue-800 dark:text-blue-400 mb-4 flex items-center gap-2 text-lg"><i data-lucide="align-left" class="w-5 h-5"></i> <span data-i18n="description">Description du Projet</span></h4>
+                                <p id="detail-desc" class="text-slate-700 dark:text-slate-300 leading-relaxed text-sm md:text-base whitespace-pre-line"></p>
                             </div>
                             
                             <div id="detail-code-container" class="bg-[#0d1117] rounded-2xl border border-slate-800 mb-10 hidden shadow-2xl overflow-hidden flex-col">
@@ -309,71 +256,120 @@
         </button>
     </div>
 
-    <!-- MODAL Paramètres Méta Image (Admin) -->
-    <div id="image-meta-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/50 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl w-96 border border-slate-200 dark:border-slate-700">
-            <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white">Paramètres de l'image</h3>
-            <input type="hidden" id="meta-block-idx">
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1">Légende (FR)</label>
-                    <input type="text" id="meta-cap-fr" class="w-full border border-slate-300 dark:border-slate-600 p-2 rounded bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1">Légende (EN)</label>
-                    <input type="text" id="meta-cap-en" class="w-full border border-slate-300 dark:border-slate-600 p-2 rounded bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white outline-none">
+    <!-- CHATBOT IA -->
+    <div id="chatbot-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chatbot-window" class="hidden bg-white dark:bg-slate-900 w-80 sm:w-96 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 mb-4 flex-col overflow-hidden transition-all transform origin-bottom-right duration-300 scale-95 opacity-0">
+            <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
+                <div class="flex items-center gap-2"><i data-lucide="bot" class="w-5 h-5"></i><h3 class="font-bold text-sm">Assistant Data IA</h3></div>
+                <button onclick="toggleChatbot()" class="hover:text-indigo-200 transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div id="chatbot-messages" class="p-4 h-80 overflow-y-auto bg-slate-50 dark:bg-slate-950 flex flex-col gap-3 custom-scrollbar text-sm">
+                <div class="self-start bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-2xl rounded-tl-sm text-slate-700 dark:text-slate-300 shadow-sm max-w-[85%]">
+                    Bonjour ! Je suis l'assistant virtuel d'Erion. Vous cherchez des informations sur ses projets de Data Science ou ses compétences ?
                 </div>
             </div>
-            <div class="mt-6 flex justify-end gap-2">
-                <button onclick="document.getElementById('image-meta-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded font-bold">Fermer</button>
-                <button onclick="saveImageMeta()" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 font-bold shadow-md">Appliquer</button>
+            <div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+                <form id="chatbot-form" onsubmit="handleChatSubmit(event)" class="flex gap-2">
+                    <input type="text" id="chatbot-input" placeholder="Posez votre question..." class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 border border-transparent dark:border-slate-700" autocomplete="off">
+                    <button type="submit" class="bg-indigo-600 text-white p-2 rounded-xl hover:bg-indigo-700 transition flex shrink-0 items-center justify-center"><i data-lucide="send" class="w-4 h-4"></i></button>
+                </form>
             </div>
         </div>
+        <button onclick="toggleChatbot()" id="chatbot-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-xl shadow-indigo-600/40 transition-transform hover:scale-110 flex items-center justify-center">
+            <i data-lucide="message-square" class="w-6 h-6"></i>
+        </button>
     </div>
 
-    <!-- MODAL ÉDITION PROJET (Métadonnées) -->
+    <!-- MODAL ÉDITION PROJET -->
     <div id="edit-modal" class="fixed inset-0 z-[70] hidden">
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"></div>
         <div class="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] border border-slate-200 dark:border-slate-700">
-                <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center font-bold">
-                    <h3 class="text-xl text-slate-800 dark:text-white flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5"></i> Paramètres du Projet</h3>
-                    <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <div class="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[95vh] border border-slate-200 dark:border-slate-700">
+                <div class="p-4 md:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center font-bold">
+                    <h3 class="text-xl text-slate-800 dark:text-white">Éditer / Ajouter un projet</h3>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="autoTranslateProject(event)" class="text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-3 py-2 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition flex items-center gap-1 font-bold">✨ Traduire FR -> EN</button>
+                        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition p-1"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    </div>
                 </div>
-                <div class="p-4 overflow-y-auto space-y-4 text-sm custom-scrollbar bg-slate-50 dark:bg-slate-950">
+                <div class="p-4 md:p-6 overflow-y-auto space-y-6 text-sm custom-scrollbar bg-slate-50 dark:bg-slate-950">
                     <input type="hidden" id="edit-id">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block font-bold text-slate-600 dark:text-slate-400 mb-1">Titre (FR)</label><input type="text" id="edit-title-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg outline-none"></div>
-                        <div><label class="block font-bold text-slate-600 dark:text-slate-400 mb-1">Title (EN)</label><input type="text" id="edit-title-en" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg outline-none"></div>
+                    <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                        <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">1. Informations Générales</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block font-bold text-slate-600 dark:text-slate-400 mb-1">Titre (FR)</label><input type="text" id="edit-title-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></div>
+                            <div><label class="block font-bold text-slate-600 dark:text-slate-400 mb-1">Title (EN)</label><input type="text" id="edit-title-en" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
+                        </div>
+                        
+                        <div class="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50 p-4 md:p-5 rounded-xl shadow-sm mt-4">
+                            <label class="block font-bold text-indigo-900 dark:text-indigo-300 mb-4 flex items-center gap-2">
+                                <i data-lucide="tags" class="w-5 h-5 text-indigo-500"></i> Catégories du projet
+                            </label>
+                            <div class="mb-4">
+                                <label class="block text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-2">1. Ajouter depuis la liste :</label>
+                                <select id="preset-categories" onchange="addCategoryFromSelect(this)" class="w-full border border-indigo-200 dark:border-indigo-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium cursor-pointer shadow-sm">
+                                    <option value="">-- Sélectionnez pour ajouter une catégorie --</option>
+                                    <option value="Analyse exploratoire|Exploratory Data Analysis">Analyse exploratoire</option>
+                                    <option value="Visualisation de données|Data Visualization">Visualisation de données</option>
+                                    <option value="Web scraping / collecte de données|Web Scraping / Data Collection">Web scraping / collecte de données</option>
+                                    <option value="Développement logiciel / web|Software / Web Development">Développement logiciel / web</option>
+                                    <option value="Machine Learning|Machine Learning">Machine Learning</option>
+                                    <option value="Data Mining|Data Mining">Data Mining</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">2. Catégories (FR) - Séparez par des virgules</label><input type="text" id="edit-cat-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Ex: Machine Learning, API Custom..."></div>
+                                <div><label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Categories (EN)</label><input type="text" id="edit-cat-en" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white p-2.5 rounded-lg text-sm" placeholder="Ex: Machine Learning, Custom API..."></div>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                <button type="button" onclick="addCategoryToInputs('Analyse exploratoire', 'Exploratory Data Analysis')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Analyse exploratoire</button>
+                                <button type="button" onclick="addCategoryToInputs('Visualisation de données', 'Data Visualization')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Dataviz</button>
+                                <button type="button" onclick="addCategoryToInputs('Web scraping', 'Web Scraping')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Scraping</button>
+                                <button type="button" onclick="addCategoryToInputs('Machine Learning', 'Machine Learning')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Machine Learning</button>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Catégories (FR) - Virgules</label><input type="text" id="edit-cat-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg outline-none"></div>
-                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Categories (EN)</label><input type="text" id="edit-cat-en" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg outline-none"></div>
+                    <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                        <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center gap-2"><i data-lucide="align-left" class="w-4 h-4 text-blue-500"></i> 2. Description du Projet</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Description (FR)</label><textarea id="edit-desc-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg h-48 custom-scrollbar" placeholder="Expliquez la problématique métier et votre solution technique..."></textarea></div>
+                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Description (EN)</label><textarea id="edit-desc-en" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white p-2.5 rounded-lg h-48 custom-scrollbar"></textarea></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                        <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-emerald-500"></i> 3. Visualisations & Images</h4>
+                        <input type="text" id="edit-images-text" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg" placeholder="Liens des images, séparés par des virgules">
                     </div>
                     
-                    <div>
-                        <label class="block font-bold text-slate-600 dark:text-slate-400 mb-1"><i data-lucide="image" class="w-4 h-4 inline"></i> Cover & Galerie (URLs)</label>
-                        <input type="text" id="edit-images-text" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg" placeholder="https://..., https://...">
+                    <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                        <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">4. Technologies & Liens</h4>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Outils (séparés par virgule)</label><input type="text" id="edit-tech" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
+                        
+                        <div class="pt-2">
+                            <label class="block text-xs font-bold text-slate-500 mb-1 flex items-center gap-2"><i data-lucide="layout-dashboard" class="w-4 h-4 text-pink-500"></i> Lien Dashboard Interactif (Streamlit, Looker, Tableau...)</label>
+                            <input type="text" id="edit-embedUrl" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg" placeholder="Ex: https://app.streamlit.app/...">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Lien du rendu (App / PDF)</label><input type="text" id="edit-linkDemo" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Lien GitHub (Dépôt)</label><input type="text" id="edit-linkCode" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
+                        </div>
                     </div>
                     
-                    <div>
-                        <label class="block font-bold text-slate-600 dark:text-slate-400 mb-1">Outils (séparés par virgule)</label>
-                        <input type="text" id="edit-tech" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg">
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Dashboard Embed URL</label><input type="text" id="edit-embedUrl" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg"></div>
-                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Lien GitHub</label><input type="text" id="edit-linkCode" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 rounded-lg"></div>
+                    <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center mb-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                            <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i data-lucide="folder-code" class="w-4 h-4 text-purple-500"></i> 5. Code Source (Onglets)</h4>
+                            <button type="button" onclick="addCodeSnippetField()" class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition font-bold flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> Ajouter Fichier</button>
+                        </div>
+                        <div id="edit-code-snippets-container" class="space-y-4"></div>
                     </div>
                 </div>
-                <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-between bg-white dark:bg-slate-900 rounded-b-2xl">
-                    <button type="button" onclick="autoTranslateProject(event)" class="text-xs bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg hover:bg-indigo-200 transition font-bold">✨ Traduire FR -> EN</button>
-                    <div class="flex gap-2">
-                        <button onclick="closeEditModal()" class="px-5 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 rounded-xl font-bold">Annuler</button>
-                        <button onclick="saveProjectMeta()" class="px-5 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-bold shadow-md">Sauvegarder</button>
-                    </div>
+                <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900 rounded-b-2xl">
+                    <button onclick="closeEditModal()" class="px-5 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition font-bold">Annuler</button>
+                    <button onclick="saveProject()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition font-bold">Enregistrer le projet</button>
                 </div>
             </div>
         </div>
@@ -426,20 +422,6 @@
     </div>
 
     <script id="data-script">
-        /**
-         * ENDPOINTS DOCUMENTATION FOR WYSIWYG
-         * ------------------------------------
-         * POST /api/v1/upload
-         * - Reçoit: multipart/form-data (image file)
-         * - Fonction: Resize <1920px, convert WebP, strip EXIF.
-         * - Retourne: { "image_url": "https://...", "id": "img_xxx" }
-         * * POST /api/v1/projects/{id}/blocks
-         * - Reçoit: JSON array des contentBlocks triés par `order_index`.
-         * - Fonction: Remplace ou met à jour la structure de la description.
-         * * JSON Schema par bloc image:
-         * { "type":"image_block", "id":"imgblk_1", "image_url":"https://...", "caption":"...", "align":"center", "lightbox":true, "width_pct":65, "order_index":3, "locked": false }
-         */
-
         let currentLang = 'fr';
         let isAdmin = true;
         let editingSkillType = 'skill'; 
@@ -470,25 +452,83 @@
             projects: [
                 {
                     id: 1,
-                    images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?fit=crop&w=800&h=400"],
+                    images: [
+                        "https://images.unsplash.com/photo-1560518883-ce09059eeffa?fit=crop&w=800&h=400",
+                        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400"
+                    ],
                     tech: ["Python", "Scikit-Learn", "Pandas", "Matplotlib", "Seaborn"],
                     linkDemo: "#", linkCode: "#",
-                    codeSnippets: [],
-                    contentBlocks: [
-                        { id: "blk_1", type: "text", order_index: 1, text_fr: "**Problématique :**\nLes agents immobiliers manquaient d'un outil automatisé pour estimer la valeur des biens en fonction de caractéristiques multiples (surface, localisation, état).\n\n**Solution & Approche :**\nMise en place d'un pipeline Data complet avec :\n1. Collecte et préparation : Nettoyage des valeurs aberrantes et transformation via Pandas.\n2. Modélisation : Entraînement d'un modèle de régression avec Scikit-Learn.", text_en: "**Problem:**\nReal estate agents lacked an automated tool to estimate property values based on multiple features.\n\n**Solution & Approach:**\nImplementation of a complete Data pipeline with:\n1. Data preparation: Cleaning and transformation using Pandas." },
-                        { id: "blk_2", type: "image_block", order_index: 2, image_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400", align: "right", width_pct: 45, lightbox: true, caption_fr: "Analyse des résidus de la régression", caption_en: "Regression residuals analysis", locked: false },
-                        { id: "blk_3", type: "text", order_index: 3, text_fr: "Le graphique ci-contre démontre la répartition des erreurs de prédictions sur le modèle de test. On remarque que les erreurs sont globalement centrées autour de 0, ce qui valide l'approche linéaire choisie.\n\n3. Visualisation : Création de graphiques d'analyse des résidus avec Matplotlib et Seaborn.\n\nCe projet illustre l'intégration de bout en bout d'un modèle prédictif.", text_en: "The adjacent chart demonstrates the error distribution. \n\n3. Visualization: Creating residual analysis charts with Matplotlib.\n\nThis project illustrates end-to-end predictive model integration." }
+                    codeSnippets: [
+                        {
+                            title: "1_data_prep.py",
+                            code: "import pandas as pd\n\n# 1. Collecte et préparation des données\ndf = pd.read_csv('housing_data.csv')\n\n# Nettoyage et transformation\ndf = df.dropna(subset=['price', 'surface'])\ndf['price_per_sqm'] = df['price'] / df['surface']\n\n# Encodage des variables catégorielles\ndf = pd.get_dummies(df, columns=['location'])\n\nprint('Données prêtes pour l\\'entraînement.')"
+                        },
+                        {
+                            title: "2_model.py",
+                            code: "from sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_squared_error, r2_score\n\n# 2. Développement du modèle\nX = df.drop('price', axis=1)\ny = df['price']\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nmodel = RandomForestRegressor(n_estimators=100, random_state=42)\nmodel.fit(X_train, y_train)\n\npredictions = model.predict(X_test)\nprint(f'R² Score: {r2_score(y_test, predictions):.2f}')"
+                        },
+                        {
+                            title: "3_visualization.py",
+                            code: "import matplotlib.pyplot as plt\nimport seaborn as sns\n\n# 3. Création de visualisations\nplt.figure(figsize=(10, 6))\nsns.scatterplot(x=y_test, y=predictions, alpha=0.6)\nplt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')\n\nplt.title('Prix Réels vs Prédictions')\nplt.xlabel('Prix Réel (€)')\nplt.ylabel('Prix Prédit (€)')\nplt.tight_layout()\nplt.savefig('predictions_scatter.png')\nplt.show()"
+                        }
                     ],
-                    fr: { title: "Prédiction de Prix Immobiliers", cat: "Machine Learning, Dataviz", short: "Pipeline ML complet : nettoyage, prédiction et Dataviz." },
-                    en: { title: "Real Estate Price Prediction", cat: "Machine Learning, Dataviz", short: "Full ML pipeline: cleaning, prediction, and Dataviz." }
+                    fr: {
+                        title: "Prédiction de Prix Immobiliers",
+                        cat: "Machine Learning, Analyse exploratoire, Visualisation de données",
+                        desc: "Problématique :\nLes agents immobiliers manquaient d'un outil automatisé pour estimer la valeur des biens en fonction de caractéristiques multiples (surface, localisation, état).\n\nSolution & Approche :\nMise en place d'un pipeline Data complet avec :\n1. Collecte et préparation : Nettoyage des valeurs aberrantes et transformation via Pandas.\n2. Modélisation : Entraînement d'un modèle de régression avec Scikit-Learn (Random Forest).\n3. Visualisation : Création de graphiques d'analyse des résidus et des prédictions avec Matplotlib et Seaborn.\n\nCe projet illustre l'intégration de bout en bout d'un modèle prédictif.",
+                        short: "Pipeline ML complet : nettoyage, prédiction (Scikit-Learn) et Dataviz des résultats."
+                    },
+                    en: {
+                        title: "Real Estate Price Prediction",
+                        cat: "Machine Learning, Exploratory Data Analysis, Data Visualization",
+                        desc: "Problem:\nReal estate agents lacked an automated tool to estimate property values based on multiple features.\n\nSolution & Approach:\nImplementation of a complete Data pipeline with:\n1. Data preparation: Cleaning and transformation using Pandas.\n2. Modeling: Training a regression model with Scikit-Learn (Random Forest).\n3. Visualization: Creating residual and prediction analysis charts with Matplotlib and Seaborn.\n\nThis project illustrates end-to-end predictive model integration.",
+                        short: "Full ML pipeline: cleaning, prediction (Scikit-Learn), and Dataviz of results."
+                    }
+                },
+                {
+                    id: 2,
+                    images: ["https://images.unsplash.com/photo-1611162617474-5b21e879e113?fit=crop&w=800&h=400"],
+                    tech: ["Python", "Prophet", "Statsmodels", "Matplotlib"],
+                    linkDemo: "#", linkCode: "#",
+                    codeSnippets: [{ title: "forecast.py", code: "from prophet import Prophet\n\n# Configuration du modèle Prophet\nm = Prophet(yearly_seasonality=True, daily_seasonality=False)\nm.fit(df_sales)\n\n# Prédiction sur 30 jours\nfuture = m.make_future_dataframe(periods=30)\nforecast = m.predict(future)\nfig = m.plot(forecast)" }],
+                    fr: { title: "Prévisions Temporelles des Ventes", cat: "Machine Learning, Analyse exploratoire", desc: "Problématique :\nL'équipe logistique avait du mal à anticiper les pics de demande saisonniers, entraînant des ruptures de stock.\n\nSolution :\nAnalyse de séries temporelles avec décomposition (Tendance, Saisonnalité, Bruit). Utilisation de Prophet et ARIMA pour prévoir les ventes à 30 jours, réduisant l'erreur de prévision (MAPE) de 15%.", short: "Modèles ARIMA et Prophet pour l'anticipation de la demande et des ventes." },
+                    en: { title: "Sales Time Series Forecasting", cat: "Machine Learning, Exploratory Data Analysis", desc: "Problem:\nThe logistics team struggled to anticipate seasonal demand peaks, leading to stockouts.\n\nSolution:\nTime series analysis with decomposition. Used Prophet and ARIMA to forecast 30-day sales, reducing MAPE by 15%.", short: "ARIMA and Prophet models for demand and sales anticipation." }
+                },
+                {
+                    id: 3,
+                    images: ["https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400"],
+                    tech: ["SQL", "Talend", "PostgreSQL", "Python"],
+                    linkDemo: "#", linkCode: "#",
+                    codeSnippets: [{ title: "etl_pipeline.sql", code: "-- Transformation des données brutes\nCREATE TABLE dim_customers AS\nSELECT \n    client_id,\n    UPPER(last_name) AS nom,\n    LOWER(email) AS email_valide,\n    COALESCE(segment, 'Standard') AS segment_client\nFROM raw_crm_data\nWHERE email LIKE '%@%';" }],
+                    fr: { title: "Intégration de Données (Data-Warehouse)", cat: "Data Mining, Analyse exploratoire", desc: "Problématique :\nLes données clients étaient dispersées dans 3 systèmes différents (CRM, ERP, Site Web), rendant l'analyse globale impossible.\n\nSolution :\nConception d'une architecture en étoile (Fait/Dimensions). Développement de flux ETL pour extraire, nettoyer (déduplication, standardisation) et charger les données dans un Data Warehouse centralisé sous PostgreSQL.", short: "Conception d'un flux ETL et modélisation d'un Data Warehouse." },
+                    en: { title: "Data Integration (Data-Warehouse)", cat: "Data Mining, Exploratory Data Analysis", desc: "Problem:\nCustomer data was scattered across 3 different systems (CRM, ERP, Website), making holistic analysis impossible.\n\nSolution:\nDesigned a star schema architecture. Developed ETL flows to extract, clean and load data into a centralized Data Warehouse.", short: "Design of an ETL flow and Data Warehouse modeling." }
+                },
+                {
+                    id: 4,
+                    images: ["https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400"],
+                    tech: ["PowerBI", "DAX", "SQL"],
+                    linkDemo: "#", linkCode: "#",
+                    codeSnippets: [],
+                    fr: { title: "Visualisation DataViz & KPI", cat: "Visualisation de données", desc: "Problématique :\nLa direction n'avait pas de vue claire sur les performances régionales et passait des heures à compiler des fichiers Excel.\n\nSolution :\nCréation de tableaux de bord interactifs sur PowerBI. Mise en place de mesures DAX complexes pour le calcul de la croissance d'une année sur l'autre (YoY) et intégration de filtres dynamiques.", short: "Tableaux de bord interactifs pour le pilotage des performances." },
+                    en: { title: "DataViz & KPI Visualization", cat: "Data Visualization", desc: "Problem:\nManagement lacked a clear view of regional performances and spent hours compiling Excel files.\n\nSolution:\nCreated interactive dashboards in PowerBI. Implemented complex DAX measures for Year-over-Year (YoY) growth calculation.", short: "Interactive dashboards for performance management." }
+                },
+                {
+                    id: 5,
+                    images: ["https://images.unsplash.com/photo-1460925895917-afdab827c52f?fit=crop&w=800&h=400"],
+                    tech: ["Streamlit", "Plotly", "Python", "Machine Learning"],
+                    linkDemo: "#", linkCode: "#",
+                    codeSnippets: [{ title: "app.py", code: "import streamlit as st\nimport plotly.express as px\n\nst.title('Analyse du Churn Client')\n\n# Interactive scatter plot\nfig = px.scatter(df, x='Tenure', y='MonthlyCharges', color='Churn')\nst.plotly_chart(fig)" }],
+                    fr: { title: "Challenge Dataviz : Analyse du Churn", cat: "Visualisation de données, Machine Learning", desc: "Problématique :\nDans le cadre d'un hackathon, il fallait identifier visuellement les facteurs menant au désabonnement (Churn) d'une entreprise Telecom.\n\nSolution :\nDéveloppement d'une application web interactive avec Streamlit et Plotly. L'outil permet d'explorer les données via des graphiques interactifs et intègre un modèle de classification pour simuler le risque de départ d'un client.", short: "Application interactive exploratoire sur le désabonnement client." },
+                    en: { title: "Dataviz Challenge: Churn Analysis", cat: "Data Visualization, Machine Learning", desc: "Problem:\nDuring a hackathon, we needed to visually identify the factors leading to customer churn in a Telecom company.\n\nSolution:\nDeveloped an interactive web application with Streamlit and Plotly. Integrates a classification model to simulate departure risk.", short: "Interactive exploratory application on customer churn." }
                 }
             ]
         };
 
         const i18n = {
-            fr: { navProjects: "Projets", navSkills: "Compétences", navProfile: "Profil", projTitle: "Mes Réalisations", projSub: "Explorer mes projets Data Science.", addProj: "Nouveau Projet", addSkill: "Ajouter", langTitle: "Langages & Concepts", addLang: "Ajouter un langage", toolsTitle: "Outils & Librairies", addTool: "Ajouter un outil", softTitle: "Savoir-être (Soft Skills)", addSoft: "Ajouter une qualité", contactMe: "Me contacter", sharePort: "Partager mon Portfolio", shareDesc: "Voici le QR Code qui mène vers ce site.", view: "Voir", backToProj: "Retour", aiSearch: "Recherche IA", description: "Étude de Cas" },
-            en: { navProjects: "Projects", navSkills: "Skills", navProfile: "Profile", projTitle: "My Work", projSub: "Explore my recent Data Science projects.", addProj: "New Project", addSkill: "Add", langTitle: "Languages & Concepts", addLang: "Add Language", toolsTitle: "Tools & Libraries", addTool: "Add Tool", softTitle: "Soft Skills", addSoft: "Add Soft Skill", contactMe: "Contact Me", sharePort: "Share my Portfolio", shareDesc: "Here is the QR Code leading to this site.", view: "View", backToProj: "Back", aiSearch: "AI Search", description: "Case Study" }
+            fr: { navProjects: "Projets", navSkills: "Compétences", navProfile: "Profil", projTitle: "Mes Réalisations", projSub: "Explorer mes projets Data Science.", addProj: "Nouveau Projet", addSkill: "Ajouter", langTitle: "Langages & Concepts", addLang: "Ajouter un langage", toolsTitle: "Outils & Librairies", addTool: "Ajouter un outil", softTitle: "Savoir-être (Soft Skills)", addSoft: "Ajouter une qualité", contactMe: "Me contacter", sharePort: "Partager mon Portfolio", shareDesc: "Voici le QR Code qui mène vers ce site.", view: "Voir", backToProj: "Retour", aiSearch: "Recherche IA", description: "Description du Projet" },
+            en: { navProjects: "Projects", navSkills: "Skills", navProfile: "Profile", projTitle: "My Work", projSub: "Explore my recent Data Science projects.", addProj: "New Project", addSkill: "Add", langTitle: "Languages & Concepts", addLang: "Add Language", toolsTitle: "Tools & Libraries", addTool: "Add Tool", softTitle: "Soft Skills", addSoft: "Add Soft Skill", contactMe: "Contact Me", sharePort: "Share my Portfolio", shareDesc: "Here is the QR Code leading to this site.", view: "View", backToProj: "Back", aiSearch: "AI Search", description: "Project Description" }
         };
+        // FIN ZONE DE DONNÉES
 
         const savedData = localStorage.getItem('portfolio_erion_data');
         if (savedData) { try { DATA = JSON.parse(savedData); } catch(e) { console.error(e); } }
@@ -502,443 +542,175 @@
     </script>
 
     <script>
-        // --- API GEMINI (Chatbot & Traduction) ---
+        // --- LOGIQUE D'AJOUT DE CATÉGORIE DEPUIS LA LISTE DÉROULANTE ---
+        function addCategoryFromSelect(selectElement) {
+            if (!selectElement.value) return; 
+            const [catFr, catEn] = selectElement.value.split('|');
+            const inputFr = document.getElementById('edit-cat-fr');
+            const inputEn = document.getElementById('edit-cat-en');
+            
+            let valsFr = inputFr.value.split(',').map(s => s.trim()).filter(s => s !== "");
+            let valsEn = inputEn.value.split(',').map(s => s.trim()).filter(s => s !== "");
+            
+            if(!valsFr.includes(catFr)) valsFr.push(catFr);
+            if(!valsEn.includes(catEn)) valsEn.push(catEn);
+            
+            inputFr.value = valsFr.join(', ');
+            inputEn.value = valsEn.join(', ');
+            
+            selectElement.selectedIndex = 0;
+        }
+
+        // --- CONSTANTES ---
         const apiKey = ""; 
 
+        // --- API GEMINI (Chatbot) ---
         async function fetchGemini(promptText) {
             const payload = {
                 contents: [{ parts: [{ text: promptText }] }],
-                systemInstruction: { parts: [{ text: `Tu es l'assistant virtuel intégré au portfolio d'Erion Berisha, étudiant en BUT Science des Données. Réponds aux questions en te basant sur: ${JSON.stringify(DATA)}.` }] }
+                systemInstruction: { parts: [{ text: `Tu es l'assistant virtuel intégré au portfolio d'Erion Berisha, étudiant en BUT Science des Données. Ton but est de répondre aux questions en te basant STRICTEMENT sur ces données: ${JSON.stringify(DATA)}.` }] }
             };
-            for (let i = 0; i < 3; i++) {
+            const delays = [1000, 2000, 4000, 8000];
+            for (let i = 0; i < 5; i++) {
                 try {
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) throw new Error("API Error");
+                    if (!response.ok) {
+                        if(response.status === 400 && apiKey === "") {
+                            return "⚠️ **Mode local détecté.** L'IA nécessite une clé d'API valide si vous naviguez en dehors du Canvas. (Ajoutez votre clé dans la variable `apiKey` du fichier).";
+                        }
+                        throw new Error("API Error");
+                    }
                     const result = await response.json();
                     return result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur réseau.";
                 } catch (e) {
-                    if (i === 2) return "Désolé, le service IA est indisponible.";
-                    await new Promise(r => setTimeout(r, 1000));
+                    if (i === 4) return "Désolé, le service IA est indisponible (Erreur de connexion).";
+                    await new Promise(r => setTimeout(r, delays[i]));
                 }
             }
         }
 
+        // --- TRADUCTEUR ROBUSTE (GEMINI + FALLBACK MYMEMORY) ---
         async function translateText(text) {
             if(!text || !text.trim()) return "";
+            
+            // 1. Essai avec Gemini (Très performant, fonctionne dans le Canvas)
             try {
-                if (apiKey) {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { 
-                        method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-                        body: JSON.stringify({ contents: [{ parts: [{ text: `Traduire en anglais EXACTEMENT (sans commentaires):\n${text}` }] }] }) 
-                    });
+                if (apiKey || window.location.hostname.includes("google")) {
+                    const prompt = `Traduire le texte suivant du français vers l'anglais. Ne renvoie QUE la traduction exacte, sans aucun commentaire ni texte additionnel :\n\n${text}`;
+                    const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    
                     if (response.ok) {
                         const result = await response.json();
                         let t = result.candidates?.[0]?.content?.parts?.[0]?.text.trim();
                         if (t) return t.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
                     }
                 }
-            } catch (e) {}
-            return text; // Fallback simplifié
-        }
+            } catch (e) {
+                console.warn("Gemini IA indisponible pour traduction, passage au traducteur de secours...");
+            }
 
-        // --- WYSIWYG INLINE EDITOR (Noyau) ---
-        
-        let dragSrcIndex = null;
-        let isResizing = false;
-        let currentResizeIndex = null;
-        let startX = 0;
-        let startWidthPct = 0;
-
-        function getActiveBlocks() {
-            if(!currentOpenProjectId) return [];
-            const p = DATA.projects.find(x => x.id === currentOpenProjectId);
-            // S'assurer qu'il y a toujours un bloc texte vide à la fin si vide
-            if (!p.contentBlocks) p.contentBlocks = [{ id: "blk_"+Date.now(), type: "text", text_fr: "", text_en: "", order_index: 0 }];
-            p.contentBlocks.sort((a,b) => (a.order_index || 0) - (b.order_index || 0));
-            return p.contentBlocks;
-        }
-
-        function renderInlineBlocks() {
-            const container = document.getElementById('detail-blocks-container');
-            const blocks = getActiveBlocks();
-            let html = "";
+            // 2. Fallback universel MyMemory
+            let translatedLines = [];
+            const lines = text.split('\n');
             
-            if (isAdmin) html += `<div class="inline-dropzone" ondragover="inlineAllowDrop(event)" ondragleave="inlineDragLeave(event)" ondrop="inlineDrop(event, 0)"></div>`;
-
-            blocks.forEach((b, index) => {
-                const isLast = index === blocks.length - 1;
-                const nextIndex = index + 1;
-                
-                if (b.type === 'text') {
-                    const txt = currentLang === 'fr' ? (b.text_fr || '') : (b.text_en || '');
-                    if (isAdmin) {
-                        html += `
-                        <div id="blk-${index}" class="relative group mb-2 clear-both">
-                            <div class="absolute -left-6 top-1 cursor-grab opacity-0 group-hover:opacity-100 text-slate-400 hover:text-indigo-500 transition" draggable="true" ondragstart="inlineDragStart(event, ${index})"><i data-lucide="grip-vertical" class="w-4 h-4"></i></div>
-                            <div class="absolute -right-8 top-1 opacity-0 group-hover:opacity-100 flex flex-col gap-1 transition">
-                                <button onclick="inlineDeleteBlock(${index})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                            <div contenteditable="true" onblur="inlineSaveText(${index}, this.innerHTML)" onpaste="inlineHandlePaste(event, ${index})" class="editable-text text-sm md:text-base leading-relaxed outline-none min-h-[1.5em]">${txt ? parseBasicMarkdown(txt) : '<span class="text-slate-400 italic">Saisissez votre texte ici...</span>'}</div>
-                        </div>`;
-                    } else {
-                        html += `<div class="mb-4 whitespace-pre-line text-sm md:text-base leading-relaxed">${parseBasicMarkdown(txt)}</div>`;
-                    }
-                } 
-                else if (b.type === 'image_block' || b.type === 'image') {
-                    const caption = currentLang === 'fr' ? (b.caption_fr || b.caption) : (b.caption_en || b.caption);
-                    const alt = caption || `Screenshot projet`;
-                    const alignVal = b.align || 'center';
-                    const sizeVal = b.width_pct || 100;
-                    const isLocked = b.locked === true;
-
-                    let alignClass = "";
-                    let marginClass = "mb-4";
-                    if (alignVal === 'left') alignClass = `float-left mr-6 ${marginClass}`;
-                    else if (alignVal === 'right') alignClass = `float-right ml-6 ${marginClass}`;
-                    else alignClass = `mx-auto block ${marginClass} clear-both`;
-                    
-                    const clickEvt = (b.lightbox && !isAdmin) ? `onclick="openLightbox('${b.image_url || b.url}', '${caption ? caption.replace(/'/g, "\\'") : ''}')"` : '';
-                    const curClass = (b.lightbox && !isAdmin) ? "cursor-zoom-in hover:opacity-90" : "";
-                    const lockClass = isLocked ? "locked-wrapper" : "";
-                    
-                    let adminTools = "";
-                    if (isAdmin) {
-                        const dragAttr = isLocked ? `draggable="false"` : `draggable="true" ondragstart="inlineDragStart(event, ${index})"`;
-                        const lockIcon = isLocked ? "lock" : "unlock";
-                        adminTools = `
-                        <div class="absolute -top-4 right-0 bg-white dark:bg-slate-800 p-1.5 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity z-50 flex items-center gap-1 cursor-default" draggable="false">
-                            <button onclick="inlineToggleLock(${index}); event.stopPropagation();" class="hover:bg-slate-100 dark:hover:bg-slate-700 p-1.5 rounded text-slate-500 hover:text-amber-500" title="Verrouiller la position"><i data-lucide="${lockIcon}" class="w-4 h-4"></i></button>
-                            <div class="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
-                            <button onclick="inlineSetAlign(${index}, 'left'); event.stopPropagation();" class="hover:bg-slate-100 dark:hover:bg-slate-700 p-1.5 rounded ${alignVal === 'left' ? 'text-indigo-600' : 'text-slate-500'}" title="Aligner à gauche"><i data-lucide="align-left" class="w-4 h-4"></i></button>
-                            <button onclick="inlineSetAlign(${index}, 'center'); event.stopPropagation();" class="hover:bg-slate-100 dark:hover:bg-slate-700 p-1.5 rounded ${alignVal === 'center' ? 'text-indigo-600' : 'text-slate-500'}" title="Centrer"><i data-lucide="align-center" class="w-4 h-4"></i></button>
-                            <button onclick="inlineSetAlign(${index}, 'right'); event.stopPropagation();" class="hover:bg-slate-100 dark:hover:bg-slate-700 p-1.5 rounded ${alignVal === 'right' ? 'text-indigo-600' : 'text-slate-500'}" title="Aligner à droite"><i data-lucide="align-right" class="w-4 h-4"></i></button>
-                            <div class="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
-                            <button onclick="inlineEditImageMeta(${index}); event.stopPropagation();" class="hover:bg-slate-100 dark:hover:bg-slate-700 p-1.5 rounded text-slate-500 hover:text-blue-500" title="Légende & Options"><i data-lucide="settings" class="w-4 h-4"></i></button>
-                            <button onclick="inlineDeleteBlock(${index}); event.stopPropagation();" class="hover:bg-slate-100 dark:hover:bg-slate-700 p-1.5 rounded text-slate-500 hover:text-red-500" title="Supprimer"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            ${!isLocked ? `<div class="p-1.5 rounded text-indigo-400 cursor-grab" title="Glisser pour déplacer" ${dragAttr}><i data-lucide="grip-horizontal" class="w-4 h-4"></i></div>` : ''}
-                        </div>
-                        <div class="resize-handle ${isLocked ? 'locked-handle' : ''}" onmousedown="initResize(event, ${index})" title="Redimensionner"></div>
-                        `;
-                    }
-
-                    html += `
-                    <figure id="blk-${index}" class="${alignClass} group relative ${lockClass}" style="width: ${sizeVal}%;">
-                        <img src="${b.image_url || b.url}" alt="${alt}" loading="lazy" class="w-full rounded-xl shadow-md border border-slate-200 dark:border-slate-700 transition ${curClass} bg-white dark:bg-slate-800" ${clickEvt}>
-                        ${caption ? `<figcaption class="text-center text-xs text-slate-500 mt-2 italic">${caption}</figcaption>` : ''}
-                        ${adminTools}
-                    </figure>`;
+            for (let line of lines) {
+                if (!line.trim()) { translatedLines.push(""); continue; }
+                const sentences = line.match(/[^.!?]+[.!?]*/g) || [line];
+                let currentChunk = "";
+                let chunks = [];
+                for (let sentence of sentences) {
+                    if ((currentChunk.length + sentence.length) > 400) {
+                        chunks.push(currentChunk); currentChunk = sentence;
+                    } else { currentChunk += sentence; }
                 }
+                if (currentChunk) chunks.push(currentChunk);
                 
-                if (isAdmin) {
-                    html += `<div class="inline-dropzone clear-both" ondragover="inlineAllowDrop(event)" ondragleave="inlineDragLeave(event)" ondrop="inlineDrop(event, ${nextIndex})"></div>`;
+                let translatedLine = "";
+                for (let chunk of chunks) {
+                    if(!chunk.trim()) continue;
+                    try {
+                        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk.trim())}&langpair=fr|en`);
+                        const data = await res.json();
+                        if(data.responseData && data.responseData.translatedText) {
+                            translatedLine += data.responseData.translatedText + " ";
+                        } else { translatedLine += chunk + " "; }
+                    } catch (e) { translatedLine += chunk + " "; }
                 }
+                translatedLines.push(translatedLine.trim());
+            }
+            return translatedLines.join('\n');
+        }
+
+        // --- CHATBOT ---
+        let chatOpen = false;
+        function toggleChatbot() {
+            chatOpen = !chatOpen;
+            const win = document.getElementById('chatbot-window');
+            if(chatOpen) { win.classList.remove('hidden'); setTimeout(() => win.classList.remove('scale-95', 'opacity-0'), 10); document.getElementById('chatbot-input').focus(); } 
+            else { win.classList.add('scale-95', 'opacity-0'); setTimeout(() => win.classList.add('hidden'), 300); }
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('chatbot-input');
+            const msg = inputEl.value.trim();
+            if(!msg) return;
+            appendChatMsg(msg, 'user');
+            inputEl.value = '';
+            const typingId = appendTypingIndicator();
+            const reply = await fetchGemini(msg);
+            document.getElementById(typingId).remove();
+            appendChatMsg(reply, 'bot');
+        }
+
+        function appendChatMsg(text, sender) {
+            const container = document.getElementById('chatbot-messages');
+            const div = document.createElement('div');
+            const isUser = sender === 'user';
+            div.className = `p-3 rounded-2xl max-w-[85%] shadow-sm ${isUser ? 'self-end bg-indigo-600 text-white rounded-tr-sm' : 'self-start bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-tl-sm'}`;
+            div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function appendTypingIndicator() {
+            const container = document.getElementById('chatbot-messages');
+            const id = 'typing-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = "self-start bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl rounded-tl-sm shadow-sm flex gap-1";
+            div.innerHTML = `<div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function filterProjects() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            DATA.projects.forEach(p => {
+                const langData = p[currentLang] || {};
+                const searchableText = `${langData.title} ${langData.cat} ${langData.short} ${p.tech.join(' ')}`.toLowerCase();
+                const card = document.getElementById(`project-card-${p.id}`);
+                if(card) card.style.display = searchableText.includes(query) ? 'flex' : 'none';
             });
-            
-            container.innerHTML = html;
-            lucide.createIcons();
         }
 
-        // --- MANIPULATION DES BLOCS INLINE ---
-        function inlineSaveText(index, htmlContent) {
-            const blocks = getActiveBlocks();
-            // Simple sanitization from HTML back to raw or keep HTML
-            // We keep HTML for WYSIWYG but clean spans from placeholder
-            if (htmlContent.includes('Saisissez votre texte ici')) htmlContent = "";
-            if (currentLang === 'fr') blocks[index].text_fr = htmlContent;
-            else blocks[index].text_en = htmlContent;
-            triggerAutoSave();
+        function askAIToSearch() {
+            const query = document.getElementById('search-input').value.trim();
+            if(!query) return;
+            if(!chatOpen) toggleChatbot();
+            document.getElementById('chatbot-input').value = `Recherche sémantique : montre-moi des projets liés à "${query}".`;
+            document.getElementById('chatbot-form').dispatchEvent(new Event('submit'));
         }
 
-        function inlineAddBlock(type, indexToInsert = null) {
-            const blocks = getActiveBlocks();
-            const idx = indexToInsert !== null ? indexToInsert : blocks.length;
-            
-            // Decale les index suivants
-            blocks.forEach(b => { if(b.order_index >= idx) b.order_index++; });
-            
-            const newBlock = { 
-                id: "blk_" + Date.now(), 
-                type: type === 'text' ? 'text' : 'image_block', 
-                order_index: idx 
-            };
-            
-            if (type === 'text') { newBlock.text_fr = ""; newBlock.text_en = ""; }
-            else { newBlock.image_url = ""; newBlock.width_pct = 100; newBlock.align = "center"; newBlock.locked = false; newBlock.lightbox = true; }
-            
-            blocks.push(newBlock);
-            triggerAutoSave();
-            renderInlineBlocks();
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
         }
 
-        function inlineDeleteBlock(index) {
-            if(!confirm("Supprimer ce bloc ?")) return;
-            const blocks = getActiveBlocks();
-            blocks.splice(index, 1);
-            // Re-order
-            blocks.forEach((b, i) => b.order_index = i);
-            triggerAutoSave();
-            renderInlineBlocks();
-        }
-
-        function inlineSetAlign(index, align) {
-            getActiveBlocks()[index].align = align;
-            triggerAutoSave();
-            renderInlineBlocks();
-        }
-
-        function inlineToggleLock(index) {
-            const b = getActiveBlocks()[index];
-            b.locked = !b.locked;
-            triggerAutoSave();
-            renderInlineBlocks();
-        }
-
-        // --- DRAG & DROP INLINE ---
-        function inlineDragStart(e, index) {
-            dragSrcIndex = index;
-            e.dataTransfer.effectAllowed = 'move';
-            setTimeout(() => document.getElementById(`blk-${index}`).classList.add('dragging-active'), 0);
-        }
-
-        function inlineAllowDrop(e) {
-            e.preventDefault();
-            e.currentTarget.classList.add('drag-over');
-        }
-
-        function inlineDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
-        }
-
-        function inlineDrop(e, targetIndex) {
-            e.preventDefault();
-            document.querySelectorAll('.inline-dropzone').forEach(el => el.classList.remove('drag-over'));
-            const srcEl = document.querySelector('.dragging-active');
-            if(srcEl) srcEl.classList.remove('dragging-active');
-            
-            if (dragSrcIndex === null) return; // Ce n'est pas un bloc interne
-            
-            const blocks = getActiveBlocks();
-            // Ajustement si on drop après le déplacement
-            if (dragSrcIndex < targetIndex) targetIndex--;
-            if (dragSrcIndex === targetIndex) return;
-
-            const movedBlock = blocks.splice(dragSrcIndex, 1)[0];
-            blocks.splice(targetIndex, 0, movedBlock);
-            
-            // Re-order index
-            blocks.forEach((b, i) => b.order_index = i);
-            
-            dragSrcIndex = null;
-            triggerAutoSave();
-            renderInlineBlocks();
-        }
-
-        // --- RESIZE INLINE ---
-        function initResize(e, index) {
-            e.preventDefault(); e.stopPropagation();
-            isResizing = true; currentResizeIndex = index;
-            startX = e.clientX;
-            startWidthPct = getActiveBlocks()[index].width_pct || 100;
-            document.body.style.cursor = 'nwse-resize';
-            document.addEventListener('mousemove', handleInlineResize);
-            document.addEventListener('mouseup', stopInlineResize);
-        }
-
-        function handleInlineResize(e) {
-            if (!isResizing) return;
-            const container = document.getElementById('detail-blocks-container');
-            const dx = e.clientX - startX;
-            let newPct = startWidthPct + ((dx / container.offsetWidth) * 100);
-            newPct = Math.max(5, Math.min(100, newPct)); // Contrainte 5% - 100%
-            
-            const el = document.getElementById(`blk-${currentResizeIndex}`);
-            if(el) el.style.width = `${newPct}%`;
-        }
-
-        function stopInlineResize(e) {
-            if (!isResizing) return;
-            isResizing = false;
-            document.body.style.cursor = 'default';
-            document.removeEventListener('mousemove', handleInlineResize);
-            document.removeEventListener('mouseup', stopInlineResize);
-            
-            const el = document.getElementById(`blk-${currentResizeIndex}`);
-            if (el) {
-                const finalPct = parseFloat(el.style.width);
-                getActiveBlocks()[currentResizeIndex].width_pct = finalPct;
-                triggerAutoSave();
-            }
-        }
-
-        // --- IMAGE UPLOAD & PASTE INLINE ---
-        function processImageToBase64(file, callback) {
-            if (file.size > 5 * 1024 * 1024) return alert("Fichier trop lourd (> 5Mo).");
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    let w = img.width, h = img.height;
-                    if (w > 1920) { h = Math.round(h * 1920 / w); w = 1920; }
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    callback(canvas.toDataURL('image/webp', 0.85)); // Supprime EXIF + compresse
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function inlineHandleUpload(e) {
-            if (e.target.files && e.target.files[0]) {
-                processImageToBase64(e.target.files[0], (dataUrl) => {
-                    const blocks = getActiveBlocks();
-                    blocks.push({ id: "blk_"+Date.now(), type: "image_block", image_url: dataUrl, width_pct: 100, align: "center", order_index: blocks.length, lightbox: true });
-                    triggerAutoSave(); renderInlineBlocks();
-                });
-            }
-        }
-
-        function inlineHandlePaste(e, index) {
-            if (!isAdmin) return;
-            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-            for (let item of items) {
-                if (item.kind === 'file' && item.type.startsWith('image/')) {
-                    e.preventDefault(); // Annule le collé textuel par défaut
-                    const blob = item.getAsFile();
-                    processImageToBase64(blob, (dataUrl) => {
-                        const blocks = getActiveBlocks();
-                        // Insère juste après le bloc texte courant
-                        const newIdx = index + 1;
-                        blocks.forEach(b => { if(b.order_index >= newIdx) b.order_index++; });
-                        blocks.splice(newIdx, 0, { id: "blk_"+Date.now(), type: "image_block", image_url: dataUrl, width_pct: 100, align: "center", order_index: newIdx, lightbox: true });
-                        triggerAutoSave(); renderInlineBlocks();
-                    });
-                }
-            }
-        }
-
-        // --- GESTION META IMAGE (MODAL) ---
-        function inlineEditImageMeta(index) {
-            const b = getActiveBlocks()[index];
-            document.getElementById('meta-block-idx').value = index;
-            document.getElementById('meta-cap-fr').value = b.caption_fr || b.caption || '';
-            document.getElementById('meta-cap-en').value = b.caption_en || '';
-            document.getElementById('image-meta-modal').classList.remove('hidden');
-        }
+        // --- GESTION AFFICHAGE PROJETS ET MODALES ---
         
-        function saveImageMeta() {
-            const index = document.getElementById('meta-block-idx').value;
-            const b = getActiveBlocks()[index];
-            b.caption_fr = document.getElementById('meta-cap-fr').value;
-            b.caption_en = document.getElementById('meta-cap-en').value;
-            document.getElementById('image-meta-modal').classList.add('hidden');
-            triggerAutoSave(); renderInlineBlocks();
-        }
-
-        // --- AFFICHAGE DU PROJET ---
-        function showProjectDetails(id) {
-            currentOpenProjectId = id;
-            const p = DATA.projects.find(x => x.id === id);
-            if(!p) return;
-            
-            document.getElementById('detail-title').textContent = p[currentLang]?.title || '';
-            const categories = (p[currentLang]?.cat || '').split(',').map(c => c.trim()).filter(c => c !== "");
-            document.getElementById('detail-tag-container').innerHTML = categories.map(c => `<span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-md uppercase">${c}</span>`).join('');
-            
-            // Affichage de la galerie (en-tête)
-            const galleryContainer = document.getElementById('detail-gallery-container');
-            currentProjectImages = (p.images || []).filter(img => img.trim() !== ""); 
-            currentImageIndex = 0;
-            if(currentProjectImages.length === 0) galleryContainer.classList.add('hidden');
-            else { galleryContainer.classList.remove('hidden'); updateGalleryView(); }
-            
-            // Rendu des blocs de l'étude de cas (WYSIWYG)
-            renderInlineBlocks();
-
-            // Techs
-            document.getElementById('detail-techs').innerHTML = (p.tech || []).map(t => `<span class="px-4 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-bold shadow-sm">${t}</span>`).join('');
-            
-            // Affichage des sections
-            document.getElementById('projects-header').classList.add('hidden');
-            document.getElementById('projects-grid').classList.add('hidden');
-            document.getElementById('project-detail-view').classList.remove('hidden');
-            document.getElementById('main-scroll-area').scrollTop = 0;
-            lucide.createIcons();
-        }
-
-        function hideProjectDetails() {
-            currentOpenProjectId = null;
-            document.getElementById('project-detail-view').classList.add('hidden');
-            document.getElementById('projects-header').classList.remove('hidden');
-            document.getElementById('projects-grid').classList.remove('hidden');
-        }
-
-        // --- LIGHTBOX & GALERIE ---
-        function updateGalleryView() {
-            const mainImg = document.getElementById('detail-main-image');
-            if(currentProjectImages.length > 0) { mainImg.style.opacity = 0; setTimeout(() => { mainImg.src = currentProjectImages[currentImageIndex]; mainImg.style.opacity = 1; }, 150); }
-            const showControls = currentProjectImages.length > 1;
-            document.getElementById('gallery-prev-btn').style.display = showControls ? 'block' : 'none';
-            document.getElementById('gallery-next-btn').style.display = showControls ? 'block' : 'none';
-            const ind = document.getElementById('gallery-indicator');
-            if(showControls) { ind.classList.remove('hidden'); ind.textContent = `${currentImageIndex + 1} / ${currentProjectImages.length}`; } else { ind.classList.add('hidden'); }
-        }
-        function prevImage() { if(currentProjectImages.length <= 1) return; currentImageIndex = (currentImageIndex - 1 + currentProjectImages.length) % currentProjectImages.length; updateGalleryView(); }
-        function nextImage() { if(currentProjectImages.length <= 1) return; currentImageIndex = (currentImageIndex + 1) % currentProjectImages.length; updateGalleryView(); }
-
-        function openLightbox(url, caption) {
-            const lb = document.getElementById('lightbox');
-            document.getElementById('lightbox-img').src = url;
-            const capEl = document.getElementById('lightbox-caption');
-            if (caption) { capEl.textContent = caption; capEl.classList.remove('hidden'); } else { capEl.classList.add('hidden'); }
-            lb.classList.remove('hidden');
-        }
-        function closeLightbox() { document.getElementById('lightbox').classList.add('hidden'); }
-
-        // --- GESTION PROJETS MÉTADONNÉES (Modal Paramètres) ---
-        function openEditModal(id = null) {
-            const p = id ? DATA.projects.find(x => x.id === id) : null;
-            document.getElementById('edit-id').value = id || '';
-            document.getElementById('edit-title-fr').value = p?.fr?.title || '';
-            document.getElementById('edit-title-en').value = p?.en?.title || '';
-            document.getElementById('edit-cat-fr').value = p?.fr?.cat || '';
-            document.getElementById('edit-cat-en').value = p?.en?.cat || '';
-            document.getElementById('edit-images-text').value = p?.images?.join(', ') || '';
-            document.getElementById('edit-tech').value = p?.tech?.join(', ') || '';
-            document.getElementById('edit-linkCode').value = p?.linkCode || '#';
-            document.getElementById('edit-embedUrl').value = p?.embedUrl || '';
-            document.getElementById('edit-modal').classList.remove('hidden');
-        }
-        function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
-        
-        function saveProjectMeta() {
-            const idStr = document.getElementById('edit-id').value;
-            const id = idStr ? parseInt(idStr) : Date.now();
-            let techArray = document.getElementById('edit-tech').value.split(',').map(s => s.trim()).filter(s => s);
-            let imagesArray = document.getElementById('edit-images-text').value.split(',').map(s => s.trim()).filter(s => s);
-            
-            const newP = {
-                id: id, images: imagesArray, tech: techArray, 
-                linkCode: document.getElementById('edit-linkCode').value, 
-                embedUrl: document.getElementById('edit-embedUrl').value, 
-                fr: { title: document.getElementById('edit-title-fr').value, cat: document.getElementById('edit-cat-fr').value },
-                en: { title: document.getElementById('edit-title-en').value, cat: document.getElementById('edit-cat-en').value }
-            };
-            
-            const idx = DATA.projects.findIndex(x => x.id == id);
-            if (idx !== -1) { 
-                newP.contentBlocks = DATA.projects[idx].contentBlocks; // Conserver les blocs !
-                DATA.projects[idx] = newP; 
-            } else { 
-                newP.contentBlocks = [{ id: "blk_"+Date.now(), type: "text", text_fr: "Nouveau projet...", order_index: 0 }];
-                DATA.projects.push(newP); 
-            }
-            closeEditModal(); triggerAutoSave(); render();
-            if(currentOpenProjectId === id) showProjectDetails(id);
-        }
-
-        // --- GLOBAL ---
         function switchTab(tabName) {
             ['projects', 'skills', 'profile'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
@@ -950,45 +722,353 @@
         }
 
         function render() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = i18n[currentLang][el.dataset.i18n];
+            });
+
             document.getElementById('nav-name').textContent = DATA.info.name;
             document.getElementById('profile-name-large').textContent = DATA.info.name;
-            document.getElementById('profile-role-large').textContent = DATA.info[currentLang]?.title || '';
-            document.getElementById('profile-bio-large').textContent = DATA.info[currentLang]?.bio || '';
+            document.getElementById('profile-role-large').textContent = (DATA.info[currentLang] || {}).title || "";
+            document.getElementById('profile-bio-large').textContent = (DATA.info[currentLang] || {}).bio || "";
             document.getElementById('profile-img-large').src = DATA.info.photo;
-            
-            // Grille projets
+            document.getElementById('profile-email-btn').href = `mailto:${DATA.info.email}`;
+            document.getElementById('profile-linkedin').href = DATA.info.linkedin;
+            document.getElementById('profile-cv').href = (DATA.info[currentLang] || {}).cvPdf || "#";
+            document.getElementById('qr-code-final').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.href)}`;
+
+            const renderItem = (s) => {
+                const isTool = s.type === 'tool';
+                const isSoft = s.type === 'soft';
+                const langData = s[currentLang] || {};
+                let bgColor, nameColor, levelColor;
+                if (isTool) { bgColor = 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 border-l-4 border-l-emerald-500'; nameColor = 'text-emerald-900 dark:text-emerald-100'; levelColor = 'text-emerald-700 dark:text-emerald-400'; } 
+                else if (isSoft) { bgColor = 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800/50 border-l-4 border-l-amber-500'; nameColor = 'text-amber-900 dark:text-amber-100'; levelColor = 'text-amber-700 dark:text-amber-400'; } 
+                else { bgColor = 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 border-l-4 border-l-blue-500'; nameColor = 'text-blue-900 dark:text-blue-100'; levelColor = 'text-blue-700 dark:text-blue-400'; }
+
+                return `
+                <div class="px-4 py-3 ${bgColor} border rounded-xl flex items-center justify-between group relative transition-transform hover:-translate-y-1 hover:shadow-lg">
+                    ${isAdmin ? `
+                    <div class="admin-only absolute -top-3 -right-2 z-10 gap-1 hidden group-hover:flex">
+                        <button onclick="openSkillModal(${s.id}, '${s.type}')" class="bg-indigo-600 text-white p-1.5 rounded-lg shadow hover:bg-indigo-500"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
+                        <button onclick="deleteSkill(${s.id})" class="bg-red-500 text-white p-1.5 rounded-lg shadow hover:bg-red-400"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>` : ''}
+                    <div class="flex flex-col w-full">
+                        <span class="font-bold ${nameColor}">${langData.name || ""}</span>
+                        <span class="text-xs ${levelColor} uppercase font-black tracking-widest mt-1">${langData.level || ""}</span>
+                    </div>
+                </div>
+                `;
+            };
+
+            document.getElementById('skills-list').innerHTML = DATA.skills.filter(s => s.type === 'skill' || !s.type).map(renderItem).join('');
+            document.getElementById('tools-list').innerHTML = DATA.skills.filter(s => s.type === 'tool').map(renderItem).join('');
+            document.getElementById('soft-list').innerHTML = DATA.skills.filter(s => s.type === 'soft').map(renderItem).join('');
+
+            // Projets
             document.getElementById('projects-grid').innerHTML = DATA.projects.map(p => {
                 const langData = p[currentLang] || {};
-                const coverImage = (p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/800x400';
+                const projectImages = p.images ? p.images : (p.image ? [p.image] : []);
+                const coverImage = projectImages.length > 0 ? projectImages[0] : 'https://via.placeholder.com/800x400?text=Data+Project';
+                const categories = (langData.cat || '').split(',').map(c => c.trim()).filter(c => c !== "");
+                const catsHtml = categories.map(c => `<span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-md uppercase tracking-wider border border-indigo-100 dark:border-indigo-800">${c}</span>`).join('');
+
                 return `
-                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col relative group">
+                <div id="project-card-${p.id}" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-300 overflow-hidden flex flex-col relative group transform hover:-translate-y-1">
                     <div class="admin-only absolute top-3 right-3 z-10 gap-2">
-                        <button onclick="openEditModal(${p.id}); event.stopPropagation();" class="bg-white/90 text-indigo-600 p-2.5 rounded-xl shadow-lg"><i data-lucide="settings" class="w-4 h-4"></i></button>
+                        <button onclick="openEditModal(${p.id}); event.stopPropagation();" class="bg-white/90 dark:bg-slate-800/90 text-indigo-600 dark:text-indigo-400 p-2.5 rounded-xl shadow-lg hover:scale-110 transition backdrop-blur"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                        <button onclick="deleteProject(${p.id}); event.stopPropagation();" class="bg-white/90 dark:bg-slate-800/90 text-red-500 p-2.5 rounded-xl shadow-lg hover:scale-110 transition backdrop-blur"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
-                    <div class="h-52 cursor-pointer relative p-4" onclick="showProjectDetails(${p.id})">
-                        <img src="${coverImage}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition">
+                    <div class="h-52 cursor-pointer overflow-hidden bg-slate-50 dark:bg-slate-950 relative flex items-center justify-center p-4 border-b border-slate-100 dark:border-slate-800" onclick="showProjectDetails(${p.id})">
+                        <img src="${coverImage}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-500 drop-shadow-md rounded-lg" loading="lazy">
                     </div>
-                    <div class="p-6 flex flex-col flex-1 cursor-pointer" onclick="showProjectDetails(${p.id})">
-                        <h3 class="text-xl font-bold mb-2">${langData.title || ''}</h3>
-                        <p class="text-slate-500 text-sm line-clamp-2">${langData.short || ''}</p>
+                    <div class="p-6 flex flex-col flex-1 cursor-pointer bg-gradient-to-b from-transparent to-slate-50/50 dark:to-slate-900/50" onclick="showProjectDetails(${p.id})">
+                        <div class="flex flex-wrap gap-1.5 mb-4">${catsHtml}</div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">${langData.title || ''}</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-5 leading-relaxed">${langData.short || ''}</p>
+                        <div class="mt-auto flex flex-wrap gap-1.5">
+                            ${(p.tech || []).slice(0,4).map(t => `<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] rounded-md font-bold">${t}</span>`).join('')}
+                            ${(p.tech || []).length > 4 ? `<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-400 text-[11px] rounded-md font-bold">+${p.tech.length - 4}</span>` : ''}
+                        </div>
                     </div>
-                </div>`;
+                </div>
+                `;
             }).join('');
             lucide.createIcons();
+        }
+
+        // --- GESTION DES TRADUCTIONS ET BOUTONS ---
+        async function autoTranslateProject(event) {
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = "⏳ Traduction...";
+            btn.disabled = true;
+            
+            try {
+                document.getElementById('edit-title-en').value = await translateText(document.getElementById('edit-title-fr').value);
+                document.getElementById('edit-cat-en').value = await translateText(document.getElementById('edit-cat-fr').value);
+                document.getElementById('edit-desc-en').value = await translateText(document.getElementById('edit-desc-fr').value);
+            } catch (e) {
+                console.error("Erreur durant la traduction du projet:", e);
+                alert("Une erreur s'est produite lors de la traduction.");
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        async function autoTranslateSkill(event) {
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = "⏳...";
+            btn.disabled = true;
+            try {
+                document.getElementById('skill-name-en').value = await translateText(document.getElementById('skill-name-fr').value);
+            } catch (e) {
+                console.error("Erreur de traduction:", e);
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'fr' ? 'en' : 'fr';
+            document.getElementById('lang-label').textContent = currentLang === 'fr' ? 'EN' : 'FR';
+            render();
+            filterProjects();
+            
+            if (currentOpenProjectId !== null && !document.getElementById('project-detail-view').classList.contains('hidden')) {
+                showProjectDetails(currentOpenProjectId);
+            }
+        }
+
+        // --- GESTION COMPÉTENCES ---
+        function openSkillModal(id = null, type = 'skill') {
+            editingSkillType = type; 
+            document.getElementById('skill-modal-title').textContent = type === 'tool' ? 'Éditer l\'outil' : (type === 'soft' ? 'Éditer la qualité' : 'Éditer la compétence');
+            const s = id ? DATA.skills.find(x => x.id === id) : null;
+            document.getElementById('skill-edit-id').value = id || '';
+            document.getElementById('skill-name-fr').value = s && s.fr ? s.fr.name : '';
+            document.getElementById('skill-name-en').value = s && s.en ? s.en.name : '';
+            document.getElementById('skill-modal').classList.remove('hidden');
+        }
+        function closeSkillModal() { document.getElementById('skill-modal').classList.add('hidden'); }
+        function saveSkill() {
+            try {
+                const idStr = document.getElementById('skill-edit-id').value;
+                const id = idStr ? parseInt(idStr) : Date.now();
+                const newS = { id: id, type: editingSkillType, fr: { name: document.getElementById('skill-name-fr').value || "", level: document.getElementById('skill-level-fr').value }, en: { name: document.getElementById('skill-name-en').value || "", level: document.getElementById('skill-level-en').value } };
+                if (idStr) { const i = DATA.skills.findIndex(x => x.id == id); if(i !== -1) DATA.skills[i] = newS; else DATA.skills.push(newS); } else { DATA.skills.push(newS); }
+                closeSkillModal(); triggerAutoSave(); render();
+            } catch(e) { alert("Erreur : " + e.message); }
+        }
+        function deleteSkill(id) { if(confirm("Supprimer ?")) { DATA.skills = DATA.skills.filter(s => s.id !== id); triggerAutoSave(); render(); } }
+
+        // --- GESTION DES FICHIERS DE CODE ---
+        function addCodeSnippetField(title = '', code = '') {
+            const container = document.getElementById('edit-code-snippets-container');
+            const div = document.createElement('div');
+            div.className = "bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 relative group";
+            const safeTitle = title.replace(/"/g, '&quot;');
+            const safeCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            div.innerHTML = `
+                <button type="button" onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-red-400 hover:text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg p-2 transition opacity-0 group-hover:opacity-100">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+                <div class="mb-4 pr-12">
+                    <label class="block text-xs font-bold text-indigo-500 uppercase mb-1">Nom du Fichier / Onglet</label>
+                    <input type="text" class="snippet-title w-full border border-slate-300 dark:border-slate-600 p-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white font-mono" placeholder="Ex: data_cleaning.py" value="${safeTitle}">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Code source</label>
+                    <textarea class="snippet-code w-full border border-slate-800 p-4 rounded-lg h-40 font-mono text-xs bg-[#0d1117] text-emerald-400 outline-none focus:ring-2 focus:ring-emerald-500 custom-scrollbar code-scrollbar">${safeCode}</textarea>
+                </div>
+            `;
+            container.appendChild(div);
+            lucide.createIcons();
+        }
+
+        // --- GESTION D'UN PROJET (EDITION META SEULEMENT MAINTENANT) ---
+        function openEditModal(id = null) {
+            const p = id ? DATA.projects.find(x => x.id === id) : null;
+            document.getElementById('edit-id').value = id || '';
+            document.getElementById('edit-title-fr').value = p && p.fr ? p.fr.title : '';
+            document.getElementById('edit-title-en').value = p && p.en ? p.en.title : '';
+            document.getElementById('edit-images-text').value = p ? (p.images ? p.images : (p.image ? [p.image] : [])).join(', ') : '';
+            
+            document.getElementById('edit-cat-fr').value = p && p.fr && p.fr.cat ? p.fr.cat : '';
+            document.getElementById('edit-cat-en').value = p && p.en && p.en.cat ? p.en.cat : '';
+            document.getElementById('preset-categories').selectedIndex = 0;
+            
+            document.getElementById('edit-desc-fr').value = p && p.fr ? p.fr.desc : '';
+            document.getElementById('edit-desc-en').value = p && p.en ? p.en.desc : '';
+            document.getElementById('edit-tech').value = p && p.tech ? p.tech.join(', ') : '';
+            document.getElementById('edit-linkDemo').value = p && p.linkDemo && p.linkDemo !== '#' ? p.linkDemo : '';
+            document.getElementById('edit-linkCode').value = p && p.linkCode && p.linkCode !== '#' ? p.linkCode : '';
+            document.getElementById('edit-embedUrl').value = p && p.embedUrl ? p.embedUrl : '';
+            
+            const snippetsContainer = document.getElementById('edit-code-snippets-container');
+            snippetsContainer.innerHTML = ''; 
+            let snippetsToLoad = (p && p.codeSnippets && Array.isArray(p.codeSnippets)) ? p.codeSnippets : [];
+            if(snippetsToLoad.length > 0) snippetsToLoad.forEach(snip => addCodeSnippetField(snip.title, snip.code));
+            else addCodeSnippetField(); 
+            
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+        function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
+        
+        function saveProject() {
+            try {
+                const idStr = document.getElementById('edit-id').value;
+                const id = idStr ? parseInt(idStr) : Date.now();
+                let demoUrl = document.getElementById('edit-linkDemo').value.trim() || '#';
+                let codeUrl = document.getElementById('edit-linkCode').value.trim() || '#';
+                let embedUrl = document.getElementById('edit-embedUrl').value.trim();
+                
+                let descFr = document.getElementById('edit-desc-fr').value || "";
+                let descEn = document.getElementById('edit-desc-en').value || "";
+                let shortFr = descFr.length > 80 ? descFr.substring(0, 80) + "..." : descFr;
+                let shortEn = descEn.length > 80 ? descEn.substring(0, 80) + "..." : descEn;
+                
+                let catFr = document.getElementById('edit-cat-fr').value;
+                let catEn = document.getElementById('edit-cat-en').value;
+                
+                let techArray = document.getElementById('edit-tech').value.split(',').map(s => s.trim()).filter(s => s !== "");
+                let imagesArray = document.getElementById('edit-images-text').value.split(',').map(s => s.trim()).filter(s => s !== "");
+                
+                let extractedSnippets = [];
+                document.querySelectorAll('#edit-code-snippets-container > div').forEach(block => {
+                    const title = block.querySelector('.snippet-title').value.trim();
+                    const code = block.querySelector('.snippet-code').value; 
+                    if (title !== "" || code.trim() !== "") extractedSnippets.push({ title: title || "Sans_Nom", code: code });
+                });
+
+                const newP = {
+                    id: id, images: imagesArray, tech: techArray, linkDemo: demoUrl, linkCode: codeUrl, embedUrl: embedUrl, 
+                    codeSnippets: extractedSnippets,
+                    fr: { title: document.getElementById('edit-title-fr').value.trim() || "Sans titre", cat: catFr, desc: descFr, short: shortFr },
+                    en: { title: document.getElementById('edit-title-en').value.trim() || "Untitled", cat: catEn, desc: descEn, short: shortEn }
+                };
+                
+                if (idStr) { const i = DATA.projects.findIndex(x => x.id == id); if(i !== -1) DATA.projects[i] = newP; else DATA.projects.push(newP); } else { DATA.projects.push(newP); }
+                closeEditModal(); triggerAutoSave(); render();
+                if(!document.getElementById('project-detail-view').classList.contains('hidden')) showProjectDetails(id);
+            } catch (err) { console.error(err); alert("Erreur d'enregistrement."); }
+        }
+
+        function deleteProject(id) { if(confirm("Supprimer ce projet ?")) { DATA.projects = DATA.projects.filter(p => p.id !== id); triggerAutoSave(); render(); hideProjectDetails(); } }
+
+        function showProjectDetails(id) {
+            try {
+                currentOpenProjectId = id;
+
+                const p = DATA.projects.find(x => x.id === id);
+                if(!p) return;
+                const langData = p[currentLang] || {};
+                
+                document.getElementById('detail-title').textContent = langData.title || '';
+                
+                document.getElementById('detail-desc').textContent = langData.desc || '';
+                
+                const categories = (langData.cat || '').split(',').map(c => c.trim()).filter(c => c !== "");
+                document.getElementById('detail-tag-container').innerHTML = categories.map(c => `<span class="text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-md uppercase tracking-wider border border-indigo-100 dark:border-indigo-800/50">${c}</span>`).join('');
+                
+                const embedContainer = document.getElementById('detail-embed-container');
+                const embedIframe = document.getElementById('detail-embed-iframe');
+                if (p.embedUrl && p.embedUrl.trim() !== '') {
+                    embedContainer.classList.remove('hidden');
+                    embedIframe.src = p.embedUrl;
+                } else {
+                    embedContainer.classList.add('hidden');
+                    embedIframe.src = '';
+                }
+
+                const galleryContainer = document.getElementById('detail-gallery-container');
+                currentProjectImages = (p.images ? p.images : (p.image ? [p.image] : [])).filter(img => img.trim() !== ""); 
+                currentImageIndex = 0;
+                
+                if(currentProjectImages.length === 0) galleryContainer.classList.add('hidden');
+                else { galleryContainer.classList.remove('hidden'); updateGalleryView(); }
+                
+                const codeContainer = document.getElementById('detail-code-container');
+                const tabsContainer = document.getElementById('detail-code-tabs');
+                currentProjectSnippets = (p.codeSnippets && Array.isArray(p.codeSnippets)) ? p.codeSnippets : [];
+
+                if (currentProjectSnippets.length > 0) {
+                    codeContainer.classList.remove('hidden'); codeContainer.classList.add('flex');
+                    tabsContainer.innerHTML = currentProjectSnippets.map((snip, index) => `<button onclick="switchCodeTab(${index})" class="code-tab-btn px-5 py-3 text-xs font-mono border-t-2 border-transparent transition-all outline-none rounded-t-lg mt-1"><i data-lucide="file-code-2" class="w-4 h-4 inline-block mr-1.5 align-text-bottom"></i> ${snip.title}</button>`).join('');
+                    switchCodeTab(0);
+                } else { codeContainer.classList.add('hidden'); codeContainer.classList.remove('flex'); tabsContainer.innerHTML = ''; }
+                
+                document.getElementById('detail-techs').innerHTML = (p.tech || []).map(t => `<span class="px-4 py-1.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700 shadow-sm">${t}</span>`).join('');
+                
+                const btnDemo = document.getElementById('detail-btn-demo');
+                const btnCode = document.getElementById('detail-btn-code');
+                const buttonsContainer = document.getElementById('detail-buttons');
+                let hasButtons = false;
+
+                if (p.linkDemo && p.linkDemo !== '#') { btnDemo.href = p.linkDemo; btnDemo.style.display = 'flex'; hasButtons = true; } else { btnDemo.style.display = 'none'; }
+                if (p.linkCode && p.linkCode !== '#') { btnCode.href = p.linkCode; btnCode.style.display = 'flex'; hasButtons = true; } else { btnCode.style.display = 'none'; }
+                buttonsContainer.style.display = hasButtons ? 'flex' : 'none';
+
+                document.getElementById('projects-header').classList.add('hidden');
+                document.getElementById('projects-grid').classList.add('hidden');
+                document.getElementById('project-detail-view').classList.remove('hidden');
+                
+                const mainContainer = document.querySelector('main');
+                if(mainContainer) mainContainer.scrollTop = 0;
+                
+                lucide.createIcons();
+            } catch (err) { console.error(err); alert("Erreur d'affichage."); }
+        }
+
+        function switchCodeTab(index) {
+            currentSnippetIndex = index;
+            document.querySelectorAll('.code-tab-btn').forEach((tab, i) => {
+                if(i === index) { tab.classList.add('bg-[#0d1117]', 'text-emerald-400', 'border-emerald-500'); tab.classList.remove('bg-transparent', 'text-slate-500', 'border-transparent', 'hover:text-slate-300'); } 
+                else { tab.classList.remove('bg-[#0d1117]', 'text-emerald-400', 'border-emerald-500'); tab.classList.add('bg-transparent', 'text-slate-500', 'border-transparent', 'hover:text-slate-300'); }
+            });
+            if(currentProjectSnippets[index]) document.getElementById('detail-code-content').textContent = currentProjectSnippets[index].code;
+        }
+
+        function updateGalleryView() {
+            const mainImg = document.getElementById('detail-main-image');
+            if(currentProjectImages.length > 0) { mainImg.style.opacity = 0; setTimeout(() => { mainImg.src = currentProjectImages[currentImageIndex]; mainImg.style.opacity = 1; }, 150); }
+            const showControls = currentProjectImages.length > 1;
+            document.getElementById('gallery-prev-btn').style.display = showControls ? 'block' : 'none';
+            document.getElementById('gallery-next-btn').style.display = showControls ? 'block' : 'none';
+            const ind = document.getElementById('gallery-indicator');
+            if(showControls) { ind.classList.remove('hidden'); ind.textContent = `${currentImageIndex + 1} / ${currentProjectImages.length}`; } else { ind.classList.add('hidden'); }
+        }
+
+        function prevImage() { if(currentProjectImages.length <= 1) return; currentImageIndex = (currentImageIndex - 1 + currentProjectImages.length) % currentProjectImages.length; updateGalleryView(); }
+        function nextImage() { if(currentProjectImages.length <= 1) return; currentImageIndex = (currentImageIndex + 1) % currentProjectImages.length; updateGalleryView(); }
+
+        function hideProjectDetails() {
+            currentOpenProjectId = null;
+            document.getElementById('detail-embed-iframe').src = '';
+            document.getElementById('project-detail-view').classList.add('hidden');
+            document.getElementById('projects-header').classList.remove('hidden');
+            document.getElementById('projects-grid').classList.remove('hidden');
         }
 
         function exportHTML() {
             hideProjectDetails();
             let html = document.documentElement.outerHTML;
             const dataStr = `let DATA = ${JSON.stringify(DATA, null, 4)};\n        // FIN ZONE DE DONNÉES`;
-            html = html.replace(/let DATA = [\s\S]*?\/\/ FIN ZONE DE DONNÉES/, dataStr);
+            const regex = /let DATA = [\s\S]*?\/\/ FIN ZONE DE DONNÉES/;
+            html = html.replace(regex, dataStr);
             html = html.replace('class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950 h-screen flex flex-col overflow-hidden admin-mode transition-colors duration-300"', 'class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950 h-screen flex flex-col overflow-hidden transition-colors duration-300"');
+            const blob = new Blob([html], { type: 'text/html' });
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-            a.download = 'index.html'; a.click();
+            a.href = URL.createObjectURL(blob);
+            a.download = 'index.html'; 
+            a.click();
         }
 
-        window.addEventListener('DOMContentLoaded', render);
+        window.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
     </script>
 </body>
 </html>
