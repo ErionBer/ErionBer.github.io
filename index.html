@@ -117,7 +117,7 @@
                             <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
                             <input type="text" id="search-input" oninput="filterProjects()" placeholder="Rechercher un outil, un projet, une techno..." class="w-full bg-transparent border-none outline-none px-3 py-2 text-sm text-slate-800 dark:text-white placeholder-slate-400">
                         </div>
-                        <button onclick="askAIToSearch()" class="shrink-0 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-indigo-100 dark:border-indigo-800">
+                        <button onclick="askAIToSearch()" class="shrink-0 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-indigo-100 dark:border-slate-800">
                             <i data-lucide="sparkles" class="w-3 h-3"></i> <span data-i18n="aiSearch">Recherche Sémantique IA</span>
                         </button>
                     </div>
@@ -161,10 +161,9 @@
                                 <iframe id="detail-embed-iframe" title="Interactive Dashboard" src="" class="w-full h-full border-0" allowFullScreen="true"></iframe>
                             </div>
                             
-                            <!-- Zone fusionnée de Description -->
-                            <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 p-6 md:p-8 rounded-2xl mb-10">
-                                <h4 class="font-bold text-blue-800 dark:text-blue-400 mb-4 flex items-center gap-2 text-lg"><i data-lucide="align-left" class="w-5 h-5"></i> <span data-i18n="description">Description du Projet</span></h4>
-                                <p id="detail-desc" class="text-slate-700 dark:text-slate-300 leading-relaxed text-sm md:text-base whitespace-pre-line"></p>
+                            <!-- AFFICHAGE DES BLOCS DYNAMIQUES -->
+                            <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 p-6 md:p-8 rounded-2xl mb-10 flow-root">
+                                <div id="detail-blocks-container" class="w-full"></div>
                             </div>
                             
                             <div id="detail-code-container" class="bg-[#0d1117] rounded-2xl border border-slate-800 mb-10 hidden shadow-2xl overflow-hidden flex-col">
@@ -302,69 +301,42 @@
                             <div><label class="block font-bold text-slate-600 dark:text-slate-400 mb-1">Title (EN)</label><input type="text" id="edit-title-en" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
                         </div>
                         
-                        <div class="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50 p-4 md:p-5 rounded-xl shadow-sm mt-4">
-                            <label class="block font-bold text-indigo-900 dark:text-indigo-300 mb-4 flex items-center gap-2">
-                                <i data-lucide="tags" class="w-5 h-5 text-indigo-500"></i> Catégories du projet
-                            </label>
-                            <div class="mb-4">
-                                <label class="block text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-2">1. Ajouter depuis la liste :</label>
-                                <select id="preset-categories" onchange="addCategoryFromSelect(this)" class="w-full border border-indigo-200 dark:border-indigo-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium cursor-pointer shadow-sm">
-                                    <option value="">-- Sélectionnez pour ajouter une catégorie --</option>
-                                    <option value="Analyse exploratoire|Exploratory Data Analysis">Analyse exploratoire</option>
-                                    <option value="Visualisation de données|Data Visualization">Visualisation de données</option>
-                                    <option value="Web scraping / collecte de données|Web Scraping / Data Collection">Web scraping / collecte de données</option>
-                                    <option value="Développement logiciel / web|Software / Web Development">Développement logiciel / web</option>
-                                    <option value="Machine Learning|Machine Learning">Machine Learning</option>
-                                    <option value="Data Mining|Data Mining">Data Mining</option>
-                                </select>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">2. Catégories (FR) - Séparez par des virgules</label><input type="text" id="edit-cat-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Ex: Machine Learning, API Custom..."></div>
-                                <div><label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Categories (EN)</label><input type="text" id="edit-cat-en" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white p-2.5 rounded-lg text-sm" placeholder="Ex: Machine Learning, Custom API..."></div>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mt-3">
-                                <button type="button" onclick="addCategoryToInputs('Analyse exploratoire', 'Exploratory Data Analysis')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Analyse exploratoire</button>
-                                <button type="button" onclick="addCategoryToInputs('Visualisation de données', 'Data Visualization')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Dataviz</button>
-                                <button type="button" onclick="addCategoryToInputs('Web scraping', 'Web Scraping')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Scraping</button>
-                                <button type="button" onclick="addCategoryToInputs('Machine Learning', 'Machine Learning')" class="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded hover:bg-indigo-600 hover:text-white transition">+ Machine Learning</button>
+                        <div>
+                            <label class="block font-bold text-slate-600 dark:text-slate-400 mb-2 flex items-center gap-2">Catégories du projet</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Catégories (FR) - Séparées par des virgules</label><input type="text" id="edit-cat-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></div>
+                                <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Categories (EN)</label><input type="text" id="edit-cat-en" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white p-2.5 rounded-lg text-sm"></div>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- ÉDITEUR DE BLOCS DYNAMIQUES -->
                     <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-                        <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center gap-2"><i data-lucide="align-left" class="w-4 h-4 text-blue-500"></i> 2. Description du Projet</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Description (FR)</label><textarea id="edit-desc-fr" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg h-48 custom-scrollbar" placeholder="Expliquez la problématique métier et votre solution technique..."></textarea></div>
-                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Description (EN)</label><textarea id="edit-desc-en" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white p-2.5 rounded-lg h-48 custom-scrollbar"></textarea></div>
+                        <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+                            <h4 class="font-bold text-slate-800 dark:text-white">2. Contenu du Projet (Blocs dynamiques)</h4>
+                        </div>
+                        
+                        <!-- Rendu des blocs -->
+                        <div id="edit-blocks-container" class="space-y-3"></div>
+                        
+                        <div class="flex gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                            <button type="button" onclick="addEditBlock('text')" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold hover:bg-indigo-100 flex items-center gap-2"><i data-lucide="type" class="w-4 h-4"></i> Ajouter Texte</button>
+                            <button type="button" onclick="addEditBlock('image')" class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-bold hover:bg-emerald-100 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4"></i> Ajouter Image URL</button>
                         </div>
                     </div>
 
                     <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-                        <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-emerald-500"></i> 3. Visualisations & Images</h4>
+                        <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">3. Images de Couverture (Galerie)</h4>
                         <input type="text" id="edit-images-text" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg" placeholder="Liens des images, séparés par des virgules">
                     </div>
                     
                     <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                         <h4 class="font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">4. Technologies & Liens</h4>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1">Outils (séparés par virgule)</label><input type="text" id="edit-tech" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
-                        
-                        <div class="pt-2">
-                            <label class="block text-xs font-bold text-slate-500 mb-1 flex items-center gap-2"><i data-lucide="layout-dashboard" class="w-4 h-4 text-pink-500"></i> Lien Dashboard Interactif (Streamlit, Looker, Tableau...)</label>
-                            <input type="text" id="edit-embedUrl" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg" placeholder="Ex: https://app.streamlit.app/...">
-                        </div>
-
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Lien du rendu (App / PDF)</label><input type="text" id="edit-linkDemo" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
-                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Lien GitHub (Dépôt)</label><input type="text" id="edit-linkCode" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Lien du rendu</label><input type="text" id="edit-linkDemo" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 mb-1">Lien GitHub</label><input type="text" id="edit-linkCode" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-2.5 rounded-lg"></div>
                         </div>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center mb-2 border-b border-slate-100 dark:border-slate-800 pb-2">
-                            <h4 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i data-lucide="folder-code" class="w-4 h-4 text-purple-500"></i> 5. Code Source (Onglets)</h4>
-                            <button type="button" onclick="addCodeSnippetField()" class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition font-bold flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> Ajouter Fichier</button>
-                        </div>
-                        <div id="edit-code-snippets-container" class="space-y-4"></div>
                     </div>
                 </div>
                 <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900 rounded-b-2xl">
@@ -425,12 +397,8 @@
         let currentLang = 'fr';
         let isAdmin = true;
         let editingSkillType = 'skill'; 
-        let currentProjectImages = []; 
-        let currentImageIndex = 0;     
-        let currentProjectSnippets = []; 
-        let currentSnippetIndex = 0;
-        let currentOpenProjectId = null;
-
+        let editBlocks = []; // État du builder de blocs
+        
         let DATA = {
             info: {
                 name: "Erion Berisha",
@@ -447,88 +415,30 @@
                 { id: 3, type: 'tool', fr: { name: "Scikit-Learn / XGBoost", level: "Avancé" }, en: { name: "Scikit-Learn / XGBoost", level: "Advanced" } },
                 { id: 4, type: 'tool', fr: { name: "Pandas / NumPy", level: "Expert" }, en: { name: "Pandas / NumPy", level: "Expert" } },
                 { id: 5, type: 'tool', fr: { name: "PowerBI / Tableau", level: "Avancé" }, en: { name: "PowerBI / Tableau", level: "Advanced" } },
-                { id: 6, type: 'tool', fr: { name: "Matplotlib / Seaborn", level: "Expert" }, en: { name: "Matplotlib / Seaborn", level: "Expert" } }
+                { id: 6, type: 'tool', fr: { name: "Matplotlib / Seaborn", level: "Expert" }, en: { name: "Matplotlib / Seaborn", level: "Expert" } },
+                { id: 7, type: 'soft', fr: { name: "Esprit d'analyse", level: "Expert" }, en: { name: "Analytical thinking", level: "Expert" } }
             ],
             projects: [
                 {
                     id: 1,
-                    images: [
-                        "https://images.unsplash.com/photo-1560518883-ce09059eeffa?fit=crop&w=800&h=400",
-                        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400"
+                    images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?fit=crop&w=800&h=400"],
+                    tech: ["Python", "Scikit-Learn", "Pandas"],
+                    linkDemo: "#", linkCode: "#",
+                    blocks: [
+                        { type: 'text', fr: 'Développement d\'un modèle de prédiction.', en: 'Development of a prediction model.', align_text: 'left' },
+                        { type: 'image', url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400', align: 'center', size: '100' },
+                        { type: 'text', fr: 'Le modèle a été déployé avec succès.', en: 'The model was successfully deployed.', align_text: 'left' }
                     ],
-                    tech: ["Python", "Scikit-Learn", "Pandas", "Matplotlib", "Seaborn"],
-                    linkDemo: "#", linkCode: "#",
-                    codeSnippets: [
-                        {
-                            title: "1_data_prep.py",
-                            code: "import pandas as pd\n\n# 1. Collecte et préparation des données\ndf = pd.read_csv('housing_data.csv')\n\n# Nettoyage et transformation\ndf = df.dropna(subset=['price', 'surface'])\ndf['price_per_sqm'] = df['price'] / df['surface']\n\n# Encodage des variables catégorielles\ndf = pd.get_dummies(df, columns=['location'])\n\nprint('Données prêtes pour l\\'entraînement.')"
-                        },
-                        {
-                            title: "2_model.py",
-                            code: "from sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_squared_error, r2_score\n\n# 2. Développement du modèle\nX = df.drop('price', axis=1)\ny = df['price']\n\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nmodel = RandomForestRegressor(n_estimators=100, random_state=42)\nmodel.fit(X_train, y_train)\n\npredictions = model.predict(X_test)\nprint(f'R² Score: {r2_score(y_test, predictions):.2f}')"
-                        },
-                        {
-                            title: "3_visualization.py",
-                            code: "import matplotlib.pyplot as plt\nimport seaborn as sns\n\n# 3. Création de visualisations\nplt.figure(figsize=(10, 6))\nsns.scatterplot(x=y_test, y=predictions, alpha=0.6)\nplt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')\n\nplt.title('Prix Réels vs Prédictions')\nplt.xlabel('Prix Réel (€)')\nplt.ylabel('Prix Prédit (€)')\nplt.tight_layout()\nplt.savefig('predictions_scatter.png')\nplt.show()"
-                        }
-                    ],
-                    fr: {
-                        title: "Prédiction de Prix Immobiliers",
-                        cat: "Machine Learning, Analyse exploratoire, Visualisation de données",
-                        desc: "Problématique :\nLes agents immobiliers manquaient d'un outil automatisé pour estimer la valeur des biens en fonction de caractéristiques multiples (surface, localisation, état).\n\nSolution & Approche :\nMise en place d'un pipeline Data complet avec :\n1. Collecte et préparation : Nettoyage des valeurs aberrantes et transformation via Pandas.\n2. Modélisation : Entraînement d'un modèle de régression avec Scikit-Learn (Random Forest).\n3. Visualisation : Création de graphiques d'analyse des résidus et des prédictions avec Matplotlib et Seaborn.\n\nCe projet illustre l'intégration de bout en bout d'un modèle prédictif.",
-                        short: "Pipeline ML complet : nettoyage, prédiction (Scikit-Learn) et Dataviz des résultats."
-                    },
-                    en: {
-                        title: "Real Estate Price Prediction",
-                        cat: "Machine Learning, Exploratory Data Analysis, Data Visualization",
-                        desc: "Problem:\nReal estate agents lacked an automated tool to estimate property values based on multiple features.\n\nSolution & Approach:\nImplementation of a complete Data pipeline with:\n1. Data preparation: Cleaning and transformation using Pandas.\n2. Modeling: Training a regression model with Scikit-Learn (Random Forest).\n3. Visualization: Creating residual and prediction analysis charts with Matplotlib and Seaborn.\n\nThis project illustrates end-to-end predictive model integration.",
-                        short: "Full ML pipeline: cleaning, prediction (Scikit-Learn), and Dataviz of results."
-                    }
-                },
-                {
-                    id: 2,
-                    images: ["https://images.unsplash.com/photo-1611162617474-5b21e879e113?fit=crop&w=800&h=400"],
-                    tech: ["Python", "Prophet", "Statsmodels", "Matplotlib"],
-                    linkDemo: "#", linkCode: "#",
-                    codeSnippets: [{ title: "forecast.py", code: "from prophet import Prophet\n\n# Configuration du modèle Prophet\nm = Prophet(yearly_seasonality=True, daily_seasonality=False)\nm.fit(df_sales)\n\n# Prédiction sur 30 jours\nfuture = m.make_future_dataframe(periods=30)\nforecast = m.predict(future)\nfig = m.plot(forecast)" }],
-                    fr: { title: "Prévisions Temporelles des Ventes", cat: "Machine Learning, Analyse exploratoire", desc: "Problématique :\nL'équipe logistique avait du mal à anticiper les pics de demande saisonniers, entraînant des ruptures de stock.\n\nSolution :\nAnalyse de séries temporelles avec décomposition (Tendance, Saisonnalité, Bruit). Utilisation de Prophet et ARIMA pour prévoir les ventes à 30 jours, réduisant l'erreur de prévision (MAPE) de 15%.", short: "Modèles ARIMA et Prophet pour l'anticipation de la demande et des ventes." },
-                    en: { title: "Sales Time Series Forecasting", cat: "Machine Learning, Exploratory Data Analysis", desc: "Problem:\nThe logistics team struggled to anticipate seasonal demand peaks, leading to stockouts.\n\nSolution:\nTime series analysis with decomposition. Used Prophet and ARIMA to forecast 30-day sales, reducing MAPE by 15%.", short: "ARIMA and Prophet models for demand and sales anticipation." }
-                },
-                {
-                    id: 3,
-                    images: ["https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400"],
-                    tech: ["SQL", "Talend", "PostgreSQL", "Python"],
-                    linkDemo: "#", linkCode: "#",
-                    codeSnippets: [{ title: "etl_pipeline.sql", code: "-- Transformation des données brutes\nCREATE TABLE dim_customers AS\nSELECT \n    client_id,\n    UPPER(last_name) AS nom,\n    LOWER(email) AS email_valide,\n    COALESCE(segment, 'Standard') AS segment_client\nFROM raw_crm_data\nWHERE email LIKE '%@%';" }],
-                    fr: { title: "Intégration de Données (Data-Warehouse)", cat: "Data Mining, Analyse exploratoire", desc: "Problématique :\nLes données clients étaient dispersées dans 3 systèmes différents (CRM, ERP, Site Web), rendant l'analyse globale impossible.\n\nSolution :\nConception d'une architecture en étoile (Fait/Dimensions). Développement de flux ETL pour extraire, nettoyer (déduplication, standardisation) et charger les données dans un Data Warehouse centralisé sous PostgreSQL.", short: "Conception d'un flux ETL et modélisation d'un Data Warehouse." },
-                    en: { title: "Data Integration (Data-Warehouse)", cat: "Data Mining, Exploratory Data Analysis", desc: "Problem:\nCustomer data was scattered across 3 different systems (CRM, ERP, Website), making holistic analysis impossible.\n\nSolution:\nDesigned a star schema architecture. Developed ETL flows to extract, clean and load data into a centralized Data Warehouse.", short: "Design of an ETL flow and Data Warehouse modeling." }
-                },
-                {
-                    id: 4,
-                    images: ["https://images.unsplash.com/photo-1551288049-bebda4e38f71?fit=crop&w=800&h=400"],
-                    tech: ["PowerBI", "DAX", "SQL"],
-                    linkDemo: "#", linkCode: "#",
-                    codeSnippets: [],
-                    fr: { title: "Visualisation DataViz & KPI", cat: "Visualisation de données", desc: "Problématique :\nLa direction n'avait pas de vue claire sur les performances régionales et passait des heures à compiler des fichiers Excel.\n\nSolution :\nCréation de tableaux de bord interactifs sur PowerBI. Mise en place de mesures DAX complexes pour le calcul de la croissance d'une année sur l'autre (YoY) et intégration de filtres dynamiques.", short: "Tableaux de bord interactifs pour le pilotage des performances." },
-                    en: { title: "DataViz & KPI Visualization", cat: "Data Visualization", desc: "Problem:\nManagement lacked a clear view of regional performances and spent hours compiling Excel files.\n\nSolution:\nCreated interactive dashboards in PowerBI. Implemented complex DAX measures for Year-over-Year (YoY) growth calculation.", short: "Interactive dashboards for performance management." }
-                },
-                {
-                    id: 5,
-                    images: ["https://images.unsplash.com/photo-1460925895917-afdab827c52f?fit=crop&w=800&h=400"],
-                    tech: ["Streamlit", "Plotly", "Python", "Machine Learning"],
-                    linkDemo: "#", linkCode: "#",
-                    codeSnippets: [{ title: "app.py", code: "import streamlit as st\nimport plotly.express as px\n\nst.title('Analyse du Churn Client')\n\n# Interactive scatter plot\nfig = px.scatter(df, x='Tenure', y='MonthlyCharges', color='Churn')\nst.plotly_chart(fig)" }],
-                    fr: { title: "Challenge Dataviz : Analyse du Churn", cat: "Visualisation de données, Machine Learning", desc: "Problématique :\nDans le cadre d'un hackathon, il fallait identifier visuellement les facteurs menant au désabonnement (Churn) d'une entreprise Telecom.\n\nSolution :\nDéveloppement d'une application web interactive avec Streamlit et Plotly. L'outil permet d'explorer les données via des graphiques interactifs et intègre un modèle de classification pour simuler le risque de départ d'un client.", short: "Application interactive exploratoire sur le désabonnement client." },
-                    en: { title: "Dataviz Challenge: Churn Analysis", cat: "Data Visualization, Machine Learning", desc: "Problem:\nDuring a hackathon, we needed to visually identify the factors leading to customer churn in a Telecom company.\n\nSolution:\nDeveloped an interactive web application with Streamlit and Plotly. Integrates a classification model to simulate departure risk.", short: "Interactive exploratory application on customer churn." }
+                    fr: { title: "Prédiction de Prix", cat: "Machine Learning" },
+                    en: { title: "Price Prediction", cat: "Machine Learning" }
                 }
             ]
         };
 
         const i18n = {
-            fr: { navProjects: "Projets", navSkills: "Compétences", navProfile: "Profil", projTitle: "Mes Réalisations", projSub: "Explorer mes projets Data Science.", addProj: "Nouveau Projet", addSkill: "Ajouter", langTitle: "Langages & Concepts", addLang: "Ajouter un langage", toolsTitle: "Outils & Librairies", addTool: "Ajouter un outil", softTitle: "Savoir-être (Soft Skills)", addSoft: "Ajouter une qualité", contactMe: "Me contacter", sharePort: "Partager mon Portfolio", shareDesc: "Voici le QR Code qui mène vers ce site.", view: "Voir", backToProj: "Retour", aiSearch: "Recherche IA", description: "Description du Projet" },
-            en: { navProjects: "Projects", navSkills: "Skills", navProfile: "Profile", projTitle: "My Work", projSub: "Explore my recent Data Science projects.", addProj: "New Project", addSkill: "Add", langTitle: "Languages & Concepts", addLang: "Add Language", toolsTitle: "Tools & Libraries", addTool: "Add Tool", softTitle: "Soft Skills", addSoft: "Add Soft Skill", contactMe: "Contact Me", sharePort: "Share my Portfolio", shareDesc: "Here is the QR Code leading to this site.", view: "View", backToProj: "Back", aiSearch: "AI Search", description: "Project Description" }
+            fr: { navProjects: "Projets", navSkills: "Compétences", navProfile: "Profil", projTitle: "Mes Réalisations", projSub: "Explorer mes projets Data Science.", addProj: "Nouveau Projet", addSkill: "Ajouter", langTitle: "Langages & Concepts", addLang: "Ajouter un langage", toolsTitle: "Outils & Librairies", addTool: "Ajouter un outil", softTitle: "Savoir-être (Soft Skills)", addSoft: "Ajouter une qualité", contactMe: "Me contacter", sharePort: "Partager mon Portfolio", shareDesc: "Voici le QR Code qui mène vers ce site.", view: "Voir", backToProj: "Retour", aiSearch: "Recherche IA" },
+            en: { navProjects: "Projects", navSkills: "Skills", navProfile: "Profile", projTitle: "My Work", projSub: "Explore my recent Data Science projects.", addProj: "New Project", addSkill: "Add", langTitle: "Languages & Concepts", addLang: "Add Language", toolsTitle: "Tools & Libraries", addTool: "Add Tool", softTitle: "Soft Skills", addSoft: "Add Soft Skill", contactMe: "Contact Me", sharePort: "Share my Portfolio", shareDesc: "Here is the QR Code leading to this site.", view: "View", backToProj: "Back", aiSearch: "AI Search" }
         };
-        // FIN ZONE DE DONNÉES
 
         const savedData = localStorage.getItem('portfolio_erion_data');
         if (savedData) { try { DATA = JSON.parse(savedData); } catch(e) { console.error(e); } }
@@ -542,29 +452,9 @@
     </script>
 
     <script>
-        // --- LOGIQUE D'AJOUT DE CATÉGORIE DEPUIS LA LISTE DÉROULANTE ---
-        function addCategoryFromSelect(selectElement) {
-            if (!selectElement.value) return; 
-            const [catFr, catEn] = selectElement.value.split('|');
-            const inputFr = document.getElementById('edit-cat-fr');
-            const inputEn = document.getElementById('edit-cat-en');
-            
-            let valsFr = inputFr.value.split(',').map(s => s.trim()).filter(s => s !== "");
-            let valsEn = inputEn.value.split(',').map(s => s.trim()).filter(s => s !== "");
-            
-            if(!valsFr.includes(catFr)) valsFr.push(catFr);
-            if(!valsEn.includes(catEn)) valsEn.push(catEn);
-            
-            inputFr.value = valsFr.join(', ');
-            inputEn.value = valsEn.join(', ');
-            
-            selectElement.selectedIndex = 0;
-        }
-
-        // --- CONSTANTES ---
+        // --- API GEMINI (Chatbot & Traduction) ---
         const apiKey = ""; 
 
-        // --- API GEMINI (Chatbot) ---
         async function fetchGemini(promptText) {
             const payload = {
                 contents: [{ parts: [{ text: promptText }] }],
@@ -589,31 +479,23 @@
             }
         }
 
-        // --- TRADUCTEUR ROBUSTE (GEMINI + FALLBACK MYMEMORY) ---
         async function translateText(text) {
             if(!text || !text.trim()) return "";
-            
-            // 1. Essai avec Gemini (Très performant, fonctionne dans le Canvas)
             try {
                 if (apiKey || window.location.hostname.includes("google")) {
                     const prompt = `Traduire le texte suivant du français vers l'anglais. Ne renvoie QUE la traduction exacte, sans aucun commentaire ni texte additionnel :\n\n${text}`;
                     const payload = { contents: [{ parts: [{ text: prompt }] }] };
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    
                     if (response.ok) {
                         const result = await response.json();
                         let t = result.candidates?.[0]?.content?.parts?.[0]?.text.trim();
                         if (t) return t.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
                     }
                 }
-            } catch (e) {
-                console.warn("Gemini IA indisponible pour traduction, passage au traducteur de secours...");
-            }
+            } catch (e) { console.warn("Gemini IA indisponible pour traduction..."); }
 
-            // 2. Fallback universel MyMemory
             let translatedLines = [];
             const lines = text.split('\n');
-            
             for (let line of lines) {
                 if (!line.trim()) { translatedLines.push(""); continue; }
                 const sentences = line.match(/[^.!?]+[.!?]*/g) || [line];
@@ -625,16 +507,14 @@
                     } else { currentChunk += sentence; }
                 }
                 if (currentChunk) chunks.push(currentChunk);
-                
                 let translatedLine = "";
                 for (let chunk of chunks) {
                     if(!chunk.trim()) continue;
                     try {
                         const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk.trim())}&langpair=fr|en`);
                         const data = await res.json();
-                        if(data.responseData && data.responseData.translatedText) {
-                            translatedLine += data.responseData.translatedText + " ";
-                        } else { translatedLine += chunk + " "; }
+                        if(data.responseData && data.responseData.translatedText) translatedLine += data.responseData.translatedText + " ";
+                        else translatedLine += chunk + " ";
                     } catch (e) { translatedLine += chunk + " "; }
                 }
                 translatedLines.push(translatedLine.trim());
@@ -721,6 +601,81 @@
             if(tabName === 'projects') hideProjectDetails();
         }
 
+        function parseBasicMarkdown(text) {
+            if (!text) return "";
+            let parsed = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/__(.*?)__/g, '<u>$1</u>')
+                .replace(/`(.*?)`/g, '<code class="bg-slate-100 dark:bg-slate-800 text-pink-500 px-1 rounded">$1</code>');
+                
+            // Gestion des listes à puces (lignes commençant par "- ")
+            parsed = parsed.replace(/(?:\n|^)(?:-\s+.*\n?)+/gm, function(match) {
+                let items = match.trim().split('\n').map(line => `<li class="pl-1">${line.replace(/^-\s+/, '').trim()}</li>`).join('');
+                // pl-5 donne un retrait propre, list-outside aligne le texte, my-3 donne de l'air
+                return `\n<ul class="list-disc list-outside pl-5 my-3 marker:text-indigo-500 space-y-1.5">${items}</ul>\n`;
+            });
+            
+            return parsed;
+        }
+
+        function insertMarkdown(index, lang, prefix, suffix) {
+            const textarea = document.getElementById(`block-${lang}-${index}`);
+            if (!textarea) return;
+            
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const before = text.substring(0, start);
+            const selection = text.substring(start, end);
+            const after = text.substring(end);
+            
+            const insertText = selection.length > 0 ? selection : "texte";
+            
+            textarea.value = before + prefix + insertText + suffix + after;
+            
+            editBlocks[index][lang] = textarea.value;
+            
+            textarea.focus();
+            if (selection.length > 0) {
+                textarea.setSelectionRange(start, start + prefix.length + insertText.length + suffix.length);
+            } else {
+                textarea.setSelectionRange(start + prefix.length, start + prefix.length + insertText.length);
+            }
+        }
+        
+        function insertList(index, lang) {
+            const textarea = document.getElementById(`block-${lang}-${index}`);
+            if (!textarea) return;
+            
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const before = text.substring(0, start);
+            const selection = text.substring(start, end);
+            const after = text.substring(end);
+            
+            let insertText = "- Élément 1\n- Élément 2";
+            if (selection.length > 0) {
+                // Ajoute "- " à chaque ligne sélectionnée
+                insertText = selection.split('\n').map(line => {
+                    if (line.trim() === '') return line;
+                    return line.startsWith('- ') ? line : `- ${line}`;
+                }).join('\n');
+            }
+            
+            // S'assurer qu'on est sur une nouvelle ligne
+            const prefixNewline = (before === '' || before.endsWith('\n')) ? '' : '\n';
+            
+            textarea.value = before + prefixNewline + insertText + after;
+            editBlocks[index][lang] = textarea.value;
+            
+            textarea.focus();
+            textarea.setSelectionRange(start + prefixNewline.length, start + prefixNewline.length + insertText.length);
+            
+            triggerAutoSave();
+        }
+
         function render() {
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 el.textContent = i18n[currentLang][el.dataset.i18n];
@@ -767,10 +722,17 @@
             // Projets
             document.getElementById('projects-grid').innerHTML = DATA.projects.map(p => {
                 const langData = p[currentLang] || {};
-                const projectImages = p.images ? p.images : (p.image ? [p.image] : []);
-                const coverImage = projectImages.length > 0 ? projectImages[0] : 'https://via.placeholder.com/800x400?text=Data+Project';
-                const categories = (langData.cat || '').split(',').map(c => c.trim()).filter(c => c !== "");
-                const catsHtml = categories.map(c => `<span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-md uppercase tracking-wider border border-indigo-100 dark:border-indigo-800">${c}</span>`).join('');
+                const coverImage = (p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/800x400?text=Data+Project';
+                
+                // Déduire un short desc au besoin
+                let finalShort = langData.short || "";
+                if (!finalShort && p.blocks && p.blocks.length > 0) {
+                    const firstText = p.blocks.find(b => b.type === 'text');
+                    if (firstText) {
+                        const t = currentLang === 'fr' ? firstText.fr : firstText.en;
+                        if (t) finalShort = t.substring(0, 100) + "...";
+                    }
+                }
 
                 return `
                 <div id="project-card-${p.id}" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-300 overflow-hidden flex flex-col relative group transform hover:-translate-y-1">
@@ -782,9 +744,9 @@
                         <img src="${coverImage}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-500 drop-shadow-md rounded-lg" loading="lazy">
                     </div>
                     <div class="p-6 flex flex-col flex-1 cursor-pointer bg-gradient-to-b from-transparent to-slate-50/50 dark:to-slate-900/50" onclick="showProjectDetails(${p.id})">
-                        <div class="flex flex-wrap gap-1.5 mb-4">${catsHtml}</div>
+                        <div class="text-[10px] font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-md uppercase tracking-wider w-fit mb-4 border border-indigo-100 dark:border-indigo-800">${langData.cat || ''}</div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">${langData.title || ''}</h3>
-                        <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-5 leading-relaxed">${langData.short || ''}</p>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-5 leading-relaxed">${parseBasicMarkdown(finalShort).replace(/<[^>]*>?/gm, '')}</p>
                         <div class="mt-auto flex flex-wrap gap-1.5">
                             ${(p.tech || []).slice(0,4).map(t => `<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] rounded-md font-bold">${t}</span>`).join('')}
                             ${(p.tech || []).length > 4 ? `<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-400 text-[11px] rounded-md font-bold">+${p.tech.length - 4}</span>` : ''}
@@ -806,7 +768,16 @@
             try {
                 document.getElementById('edit-title-en').value = await translateText(document.getElementById('edit-title-fr').value);
                 document.getElementById('edit-cat-en').value = await translateText(document.getElementById('edit-cat-fr').value);
-                document.getElementById('edit-desc-en').value = await translateText(document.getElementById('edit-desc-fr').value);
+                
+                // Traduire les blocs dynamiques
+                syncEditBlocksFromDOM();
+                for (let b of editBlocks) {
+                    if (b.type === 'text' && b.fr) {
+                        b.en = await translateText(b.fr);
+                    }
+                }
+                renderEditBlocks();
+                
             } catch (e) {
                 console.error("Erreur durant la traduction du projet:", e);
                 alert("Une erreur s'est produite lors de la traduction.");
@@ -837,8 +808,10 @@
             render();
             filterProjects();
             
-            if (currentOpenProjectId !== null && !document.getElementById('project-detail-view').classList.contains('hidden')) {
-                showProjectDetails(currentOpenProjectId);
+            if (!document.getElementById('project-detail-view').classList.contains('hidden')) {
+                // Relance l'affichage pour mettre à jour les blocs lus
+                const pId = parseInt(document.getElementById('edit-id').value); // Trick to get ID if stored
+                // Actually safer: close and require reopen, or store current project ID globally
             }
         }
 
@@ -864,31 +837,142 @@
         }
         function deleteSkill(id) { if(confirm("Supprimer ?")) { DATA.skills = DATA.skills.filter(s => s.id !== id); triggerAutoSave(); render(); } }
 
-        // --- GESTION DES FICHIERS DE CODE ---
-        function addCodeSnippetField(title = '', code = '') {
-            const container = document.getElementById('edit-code-snippets-container');
-            const div = document.createElement('div');
-            div.className = "bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 relative group";
-            const safeTitle = title.replace(/"/g, '&quot;');
-            const safeCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            div.innerHTML = `
-                <button type="button" onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-red-400 hover:text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg p-2 transition opacity-0 group-hover:opacity-100">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-                <div class="mb-4 pr-12">
-                    <label class="block text-xs font-bold text-indigo-500 uppercase mb-1">Nom du Fichier / Onglet</label>
-                    <input type="text" class="snippet-title w-full border border-slate-300 dark:border-slate-600 p-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white font-mono" placeholder="Ex: data_cleaning.py" value="${safeTitle}">
+        // --- NOUVEAU : BUILDER DE BLOCS DE CONTENU ---
+        
+        function renderEditBlocks() {
+            const container = document.getElementById('edit-blocks-container');
+            container.innerHTML = editBlocks.map((b, i) => {
+                let content = '';
+                if (b.type === 'text') {
+                    const alignVal = b.align_text || 'left';
+                    content = `
+                        <div class="mt-2 mb-2 flex gap-2">
+                             <select id="block-align-text-${i}" class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded p-1 text-xs outline-none" onchange="editBlocks[${i}].align_text = this.value">
+                                <option value="left" ${alignVal === 'left' ? 'selected' : ''}>Aligné à gauche</option>
+                                <option value="center" ${alignVal === 'center' ? 'selected' : ''}>Centré</option>
+                                <option value="right" ${alignVal === 'right' ? 'selected' : ''}>Aligné à droite</option>
+                                <option value="justify" ${alignVal === 'justify' ? 'selected' : ''}>Justifié</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-[10px] uppercase font-bold text-slate-400 block">Français</label>
+                                    <div class="flex gap-1">
+                                        <button type="button" onclick="insertMarkdown(${i}, 'fr', '**', '**')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Gras"><i data-lucide="bold" class="w-3 h-3"></i></button>
+                                        <button type="button" onclick="insertMarkdown(${i}, 'fr', '*', '*')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Italique"><i data-lucide="italic" class="w-3 h-3"></i></button>
+                                        <button type="button" onclick="insertMarkdown(${i}, 'fr', '__', '__')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Souligné"><i data-lucide="underline" class="w-3 h-3"></i></button>
+                                        <button type="button" onclick="insertList(${i}, 'fr')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Liste à puces"><i data-lucide="list" class="w-3 h-3"></i></button>
+                                    </div>
+                                </div>
+                                <textarea id="block-fr-${i}" class="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded p-2 text-xs h-24 custom-scrollbar" placeholder="Saisissez votre texte..." onchange="editBlocks[${i}].fr = this.value">${b.fr || ''}</textarea>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-[10px] uppercase font-bold text-slate-400 block">English</label>
+                                    <div class="flex gap-1">
+                                        <button type="button" onclick="insertMarkdown(${i}, 'en', '**', '**')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Bold"><i data-lucide="bold" class="w-3 h-3"></i></button>
+                                        <button type="button" onclick="insertMarkdown(${i}, 'en', '*', '*')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Italic"><i data-lucide="italic" class="w-3 h-3"></i></button>
+                                        <button type="button" onclick="insertMarkdown(${i}, 'en', '__', '__')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Underline"><i data-lucide="underline" class="w-3 h-3"></i></button>
+                                        <button type="button" onclick="insertList(${i}, 'en')" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300" title="Bullet List"><i data-lucide="list" class="w-3 h-3"></i></button>
+                                    </div>
+                                </div>
+                                <textarea id="block-en-${i}" class="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded p-2 text-xs h-24 custom-scrollbar" placeholder="Type your text..." onchange="editBlocks[${i}].en = this.value">${b.en || ''}</textarea>
+                            </div>
+                        </div>
+                    `;
+                } else if (b.type === 'image') {
+                    content = `
+                        <div class="mt-2">
+                            <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">URL de l'image</label>
+                            <div class="flex gap-2 mb-3">
+                                <i data-lucide="link" class="w-4 h-4 text-slate-400 mt-2"></i>
+                                <input type="text" id="block-url-${i}" class="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded p-2 text-xs" placeholder="https://..." value="${b.url || ''}" onchange="editBlocks[${i}].url = this.value">
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-1">
+                                    <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Alignement</label>
+                                    <select id="block-align-${i}" class="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded p-2 text-xs outline-none" onchange="editBlocks[${i}].align = this.value">
+                                        <option value="center" ${b.align === 'center' || !b.align ? 'selected' : ''}>Centré</option>
+                                        <option value="left" ${b.align === 'left' ? 'selected' : ''}>Habillage à gauche</option>
+                                        <option value="right" ${b.align === 'right' ? 'selected' : ''}>Habillage à droite</option>
+                                    </select>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Taille (%)</label>
+                                    <input type="range" id="block-size-${i}" min="10" max="100" step="5" value="${b.size || 100}" class="w-full mt-1 accent-indigo-500" oninput="document.getElementById('block-size-label-${i}').innerText = this.value + '%'; editBlocks[${i}].size = this.value">
+                                    <div class="text-center text-[10px] text-slate-500 mt-1 font-bold" id="block-size-label-${i}">${b.size || 100}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                <div class="p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 relative group">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase flex items-center gap-1">
+                            ${b.type === 'text' ? '<i data-lucide="type" class="w-4 h-4"></i> Bloc Texte' : '<i data-lucide="image" class="w-4 h-4"></i> Bloc Image'}
+                        </span>
+                        <div class="flex gap-1">
+                            <button type="button" onclick="moveEditBlock(${i}, -1)" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-500 transition" title="Monter"><i data-lucide="arrow-up" class="w-3 h-3"></i></button>
+                            <button type="button" onclick="moveEditBlock(${i}, 1)" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-500 transition" title="Descendre"><i data-lucide="arrow-down" class="w-3 h-3"></i></button>
+                            <div class="w-px h-4 bg-slate-300 dark:bg-slate-600 mx-1 my-auto"></div>
+                            <button type="button" onclick="deleteEditBlock(${i})" class="p-1.5 hover:bg-red-100 text-red-500 rounded transition" title="Supprimer"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                        </div>
+                    </div>
+                    ${content}
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Code source</label>
-                    <textarea class="snippet-code w-full border border-slate-800 p-4 rounded-lg h-40 font-mono text-xs bg-[#0d1117] text-emerald-400 outline-none focus:ring-2 focus:ring-emerald-500 custom-scrollbar code-scrollbar">${safeCode}</textarea>
-                </div>
-            `;
-            container.appendChild(div);
+                `;
+            }).join('');
             lucide.createIcons();
         }
 
-        // --- GESTION D'UN PROJET (EDITION META SEULEMENT MAINTENANT) ---
+        function syncEditBlocksFromDOM() {
+            editBlocks.forEach((b, i) => {
+                if (b.type === 'text') {
+                    const elFr = document.getElementById(`block-fr-${i}`);
+                    const elEn = document.getElementById(`block-en-${i}`);
+                    const elAlignText = document.getElementById(`block-align-text-${i}`);
+                    if (elFr) b.fr = elFr.value;
+                    if (elEn) b.en = elEn.value;
+                    if (elAlignText) b.align_text = elAlignText.value;
+                } else if (b.type === 'image') {
+                    const elUrl = document.getElementById(`block-url-${i}`);
+                    const elAlign = document.getElementById(`block-align-${i}`);
+                    const elSize = document.getElementById(`block-size-${i}`);
+                    if (elUrl) b.url = elUrl.value;
+                    if (elAlign) b.align = elAlign.value;
+                    if (elSize) b.size = elSize.value;
+                }
+            });
+        }
+
+        function addEditBlock(type) {
+            syncEditBlocksFromDOM();
+            if (type === 'text') editBlocks.push({ type: 'text', fr: '', en: '', align_text: 'left' });
+            else if (type === 'image') editBlocks.push({ type: 'image', url: '', align: 'center', size: '100' });
+            renderEditBlocks();
+        }
+
+        function deleteEditBlock(index) {
+            if(!confirm("Supprimer ce bloc ?")) return;
+            syncEditBlocksFromDOM();
+            editBlocks.splice(index, 1);
+            renderEditBlocks();
+        }
+
+        function moveEditBlock(index, dir) {
+            syncEditBlocksFromDOM();
+            if (index + dir < 0 || index + dir >= editBlocks.length) return;
+            const temp = editBlocks[index];
+            editBlocks[index] = editBlocks[index + dir];
+            editBlocks[index + dir] = temp;
+            renderEditBlocks();
+        }
+
+
+        // --- GESTION D'UN PROJET (EDITION) ---
         function openEditModal(id = null) {
             const p = id ? DATA.projects.find(x => x.id === id) : null;
             document.getElementById('edit-id').value = id || '';
@@ -898,20 +982,23 @@
             
             document.getElementById('edit-cat-fr').value = p && p.fr && p.fr.cat ? p.fr.cat : '';
             document.getElementById('edit-cat-en').value = p && p.en && p.en.cat ? p.en.cat : '';
-            document.getElementById('preset-categories').selectedIndex = 0;
             
-            document.getElementById('edit-desc-fr').value = p && p.fr ? p.fr.desc : '';
-            document.getElementById('edit-desc-en').value = p && p.en ? p.en.desc : '';
             document.getElementById('edit-tech').value = p && p.tech ? p.tech.join(', ') : '';
             document.getElementById('edit-linkDemo').value = p && p.linkDemo && p.linkDemo !== '#' ? p.linkDemo : '';
             document.getElementById('edit-linkCode').value = p && p.linkCode && p.linkCode !== '#' ? p.linkCode : '';
-            document.getElementById('edit-embedUrl').value = p && p.embedUrl ? p.embedUrl : '';
             
-            const snippetsContainer = document.getElementById('edit-code-snippets-container');
-            snippetsContainer.innerHTML = ''; 
-            let snippetsToLoad = (p && p.codeSnippets && Array.isArray(p.codeSnippets)) ? p.codeSnippets : [];
-            if(snippetsToLoad.length > 0) snippetsToLoad.forEach(snip => addCodeSnippetField(snip.title, snip.code));
-            else addCodeSnippetField(); 
+            // Gestion des blocs dynamiques
+            editBlocks = [];
+            if (p && p.blocks && p.blocks.length > 0) {
+                editBlocks = JSON.parse(JSON.stringify(p.blocks));
+            } else if (p && p.fr && p.fr.desc) {
+                // Retrocompatibilité ancien format desc en 1 seul bloc
+                editBlocks.push({ type: 'text', fr: p.fr.desc, en: p.en ? p.en.desc : '', align_text: 'left' });
+            } else {
+                // Nouveau projet : on met 1 bloc texte par defaut
+                editBlocks.push({ type: 'text', fr: '', en: '', align_text: 'left' });
+            }
+            renderEditBlocks();
             
             document.getElementById('edit-modal').classList.remove('hidden');
         }
@@ -923,12 +1010,6 @@
                 const id = idStr ? parseInt(idStr) : Date.now();
                 let demoUrl = document.getElementById('edit-linkDemo').value.trim() || '#';
                 let codeUrl = document.getElementById('edit-linkCode').value.trim() || '#';
-                let embedUrl = document.getElementById('edit-embedUrl').value.trim();
-                
-                let descFr = document.getElementById('edit-desc-fr').value || "";
-                let descEn = document.getElementById('edit-desc-en').value || "";
-                let shortFr = descFr.length > 80 ? descFr.substring(0, 80) + "..." : descFr;
-                let shortEn = descEn.length > 80 ? descEn.substring(0, 80) + "..." : descEn;
                 
                 let catFr = document.getElementById('edit-cat-fr').value;
                 let catEn = document.getElementById('edit-cat-en').value;
@@ -936,23 +1017,28 @@
                 let techArray = document.getElementById('edit-tech').value.split(',').map(s => s.trim()).filter(s => s !== "");
                 let imagesArray = document.getElementById('edit-images-text').value.split(',').map(s => s.trim()).filter(s => s !== "");
                 
-                let extractedSnippets = [];
-                document.querySelectorAll('#edit-code-snippets-container > div').forEach(block => {
-                    const title = block.querySelector('.snippet-title').value.trim();
-                    const code = block.querySelector('.snippet-code').value; 
-                    if (title !== "" || code.trim() !== "") extractedSnippets.push({ title: title || "Sans_Nom", code: code });
-                });
+                // Récupérer et sauvegarder les blocs
+                syncEditBlocksFromDOM();
+                
+                // Extraire le short texte du premier bloc de texte
+                let shortFr = "", shortEn = "";
+                const firstTextBloc = editBlocks.find(b => b.type === 'text');
+                if(firstTextBloc) {
+                    shortFr = (firstTextBloc.fr || "").substring(0, 80) + "...";
+                    shortEn = (firstTextBloc.en || "").substring(0, 80) + "...";
+                }
 
                 const newP = {
-                    id: id, images: imagesArray, tech: techArray, linkDemo: demoUrl, linkCode: codeUrl, embedUrl: embedUrl, 
-                    codeSnippets: extractedSnippets,
-                    fr: { title: document.getElementById('edit-title-fr').value.trim() || "Sans titre", cat: catFr, desc: descFr, short: shortFr },
-                    en: { title: document.getElementById('edit-title-en').value.trim() || "Untitled", cat: catEn, desc: descEn, short: shortEn }
+                    id: id, images: imagesArray, tech: techArray, linkDemo: demoUrl, linkCode: codeUrl, 
+                    blocks: JSON.parse(JSON.stringify(editBlocks)), // On stocke l'array de blocs
+                    fr: { title: document.getElementById('edit-title-fr').value.trim() || "Sans titre", cat: catFr, short: shortFr },
+                    en: { title: document.getElementById('edit-title-en').value.trim() || "Untitled", cat: catEn, short: shortEn }
                 };
+                
+                // Ne plus écrire `desc` global pour éviter la duplication. L'affichage lira `blocks`.
                 
                 if (idStr) { const i = DATA.projects.findIndex(x => x.id == id); if(i !== -1) DATA.projects[i] = newP; else DATA.projects.push(newP); } else { DATA.projects.push(newP); }
                 closeEditModal(); triggerAutoSave(); render();
-                if(!document.getElementById('project-detail-view').classList.contains('hidden')) showProjectDetails(id);
             } catch (err) { console.error(err); alert("Erreur d'enregistrement."); }
         }
 
@@ -960,7 +1046,8 @@
 
         function showProjectDetails(id) {
             try {
-                currentOpenProjectId = id;
+                // Stocker ID pour reload translation
+                document.getElementById('edit-id').value = id; 
 
                 const p = DATA.projects.find(x => x.id === id);
                 if(!p) return;
@@ -968,21 +1055,44 @@
                 
                 document.getElementById('detail-title').textContent = langData.title || '';
                 
-                document.getElementById('detail-desc').textContent = langData.desc || '';
+                // Rendu des Blocs de Contenu
+                const blocksContainer = document.getElementById('detail-blocks-container');
+                blocksContainer.className = "clearfix w-full"; // Remplace space-y-4 pour supporter les images flottantes
+                let htmlBlocks = "";
                 
-                const categories = (langData.cat || '').split(',').map(c => c.trim()).filter(c => c !== "");
-                document.getElementById('detail-tag-container').innerHTML = categories.map(c => `<span class="text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-md uppercase tracking-wider border border-indigo-100 dark:border-indigo-800/50">${c}</span>`).join('');
-                
-                const embedContainer = document.getElementById('detail-embed-container');
-                const embedIframe = document.getElementById('detail-embed-iframe');
-                if (p.embedUrl && p.embedUrl.trim() !== '') {
-                    embedContainer.classList.remove('hidden');
-                    embedIframe.src = p.embedUrl;
-                } else {
-                    embedContainer.classList.add('hidden');
-                    embedIframe.src = '';
+                let blocksToRender = p.blocks || [];
+                // Backward compat
+                if(blocksToRender.length === 0 && langData.desc) {
+                    blocksToRender = [{ type: 'text', fr: p.fr.desc, en: p.en ? p.en.desc : '', align_text: 'left' }];
                 }
 
+                blocksToRender.forEach(b => {
+                    if (b.type === 'text') {
+                        const txt = currentLang === 'fr' ? b.fr : b.en;
+                        const textAlignClass = b.align_text ? `text-${b.align_text}` : 'text-left';
+                        htmlBlocks += `<div class="mb-5 whitespace-pre-line text-base leading-relaxed text-slate-700 dark:text-slate-300 clear-none ${textAlignClass}">${parseBasicMarkdown(txt)}</div>`;
+                    } else if (b.type === 'image' && b.url) {
+                        let alignVal = b.align || 'center';
+                        let sizeVal = b.size || '100';
+                        
+                        let wrapperClass = "my-6 mx-auto block clear-both"; // Center par défaut
+                        if (alignVal === 'left') wrapperClass = "float-left mr-6 mb-4 mt-1 clear-none";
+                        if (alignVal === 'right') wrapperClass = "float-right ml-6 mb-4 mt-1 clear-none";
+
+                        htmlBlocks += `
+                        <div class="${wrapperClass}" style="width: ${sizeVal}%;">
+                            <img src="${b.url}" class="w-full rounded-xl shadow-md border border-slate-200 dark:border-slate-700" loading="lazy">
+                        </div>`;
+                    }
+                });
+                
+                // --- LA LIGNE MAGIQUE POUR FIXER LE BUG ---
+                htmlBlocks += `<div style="clear: both;"></div>`;
+                
+                blocksContainer.innerHTML = htmlBlocks;
+
+                document.getElementById('detail-tag-container').innerHTML = `<span class="text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-md uppercase">${langData.cat || ''}</span>`;
+                
                 const galleryContainer = document.getElementById('detail-gallery-container');
                 currentProjectImages = (p.images ? p.images : (p.image ? [p.image] : [])).filter(img => img.trim() !== ""); 
                 currentImageIndex = 0;
@@ -990,17 +1100,7 @@
                 if(currentProjectImages.length === 0) galleryContainer.classList.add('hidden');
                 else { galleryContainer.classList.remove('hidden'); updateGalleryView(); }
                 
-                const codeContainer = document.getElementById('detail-code-container');
-                const tabsContainer = document.getElementById('detail-code-tabs');
-                currentProjectSnippets = (p.codeSnippets && Array.isArray(p.codeSnippets)) ? p.codeSnippets : [];
-
-                if (currentProjectSnippets.length > 0) {
-                    codeContainer.classList.remove('hidden'); codeContainer.classList.add('flex');
-                    tabsContainer.innerHTML = currentProjectSnippets.map((snip, index) => `<button onclick="switchCodeTab(${index})" class="code-tab-btn px-5 py-3 text-xs font-mono border-t-2 border-transparent transition-all outline-none rounded-t-lg mt-1"><i data-lucide="file-code-2" class="w-4 h-4 inline-block mr-1.5 align-text-bottom"></i> ${snip.title}</button>`).join('');
-                    switchCodeTab(0);
-                } else { codeContainer.classList.add('hidden'); codeContainer.classList.remove('flex'); tabsContainer.innerHTML = ''; }
-                
-                document.getElementById('detail-techs').innerHTML = (p.tech || []).map(t => `<span class="px-4 py-1.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700 shadow-sm">${t}</span>`).join('');
+                document.getElementById('detail-techs').innerHTML = (p.tech || []).map(t => `<span class="px-4 py-1.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold shadow-sm border border-slate-200 dark:border-slate-700">${t}</span>`).join('');
                 
                 const btnDemo = document.getElementById('detail-btn-demo');
                 const btnCode = document.getElementById('detail-btn-code');
@@ -1015,20 +1115,8 @@
                 document.getElementById('projects-grid').classList.add('hidden');
                 document.getElementById('project-detail-view').classList.remove('hidden');
                 
-                const mainContainer = document.querySelector('main');
-                if(mainContainer) mainContainer.scrollTop = 0;
-                
                 lucide.createIcons();
             } catch (err) { console.error(err); alert("Erreur d'affichage."); }
-        }
-
-        function switchCodeTab(index) {
-            currentSnippetIndex = index;
-            document.querySelectorAll('.code-tab-btn').forEach((tab, i) => {
-                if(i === index) { tab.classList.add('bg-[#0d1117]', 'text-emerald-400', 'border-emerald-500'); tab.classList.remove('bg-transparent', 'text-slate-500', 'border-transparent', 'hover:text-slate-300'); } 
-                else { tab.classList.remove('bg-[#0d1117]', 'text-emerald-400', 'border-emerald-500'); tab.classList.add('bg-transparent', 'text-slate-500', 'border-transparent', 'hover:text-slate-300'); }
-            });
-            if(currentProjectSnippets[index]) document.getElementById('detail-code-content').textContent = currentProjectSnippets[index].code;
         }
 
         function updateGalleryView() {
@@ -1045,8 +1133,6 @@
         function nextImage() { if(currentProjectImages.length <= 1) return; currentImageIndex = (currentImageIndex + 1) % currentProjectImages.length; updateGalleryView(); }
 
         function hideProjectDetails() {
-            currentOpenProjectId = null;
-            document.getElementById('detail-embed-iframe').src = '';
             document.getElementById('project-detail-view').classList.add('hidden');
             document.getElementById('projects-header').classList.remove('hidden');
             document.getElementById('projects-grid').classList.remove('hidden');
