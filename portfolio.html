@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="fr" class="light-mode">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erion Berisha | Data Science Portfolio</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="custom-cursor" id="cc-main"></div>
+    <div class="custom-cursor-follower" id="cc-follower"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+    <nav>
+        <div class="container">
+            <div class="nav-brand">Erion</div>
+            <div class="nav-links">
+                <a href="#about" data-i18n="navProfile">Profil</a>
+                <a href="#skills" data-i18n="navSkills">Compétences</a>
+                <a href="#projects" data-i18n="navProjects">Projets</a>
+            </div>
+            <div class="controls">
+                <button class="btn-icon" onclick="toggleLang()" title="Changer de langue">
+                    <i data-lucide="languages" width="18" height="18"></i>
+                    <span id="lang-ind" class="font-bold text-xs ml-1">FR</span>
+                </button>
+                <button class="btn-icon" id="btn-theme" onclick="toggleTheme()" title="Mode sombre/clair">
+                    <i data-lucide="sun" width="18" height="18"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero / About Section -->
+        <section id="about">
+            <div class="container">
+                <div style="display: flex; gap: 4rem; align-items: center; flex-wrap: wrap;">
+                    <div class="reveal" style="flex: 1; min-width: 300px;">
+                        <h1 id="txt-greeting">Bonjour, je suis <br><span class="text-gradient">Erion Berisha.</span>
+                        </h1>
+                        <p class="subtitle" id="txt-role">Étudiant en 2ème année BUT Science des Données parcours EMS.
+                        </p>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.05rem;" id="txt-bio">
+                            Passionné par les chiffres, les algorithmes et leur impact dans le monde réel. Mon objectif
+                            est d'approfondir l'analyse de données et l'intelligence artificielle pour résoudre des
+                            problèmes concrets.
+                        </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap:wrap;">
+                            <a href="CV.pdf" id="btn-cv" class="btn-primary" target="_blank"><i data-lucide="download"
+                                    width="18"></i> Mon CV</a>
+                            <a href="https://www.linkedin.com/in/erion-berisha-448125333" class="btn-outline"
+                                target="_blank"><i data-lucide="linkedin" width="18"></i> LinkedIn</a>
+                        </div>
+                    </div>
+                    <div style="flex: 1; display:flex; justify-content:center; position: relative;">
+                        <div
+                            style="position: absolute; inset: 0; background: var(--accent-main); filter: blur(100px); opacity: 0.2; border-radius: 50%; z-index:-1;">
+                        </div>
+                        <img src="ma-photo.png"
+                            onerror="this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?fit=crop&w=600&h=600';"
+                            alt="Erion Berisha"
+                            style="width: 100%; max-width: 400px; border-radius: 30px; transform: rotate(3deg); border: 1px solid var(--glass-border); box-shadow: 0 30px 60px rgba(0,0,0,0.3);">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" style="background: rgba(0,0,0,0.05);">
+            <div class="container">
+                <h2 class="section-title" id="title-skills">Compétences & Outils</h2>
+                <div class="skills-grid" id="skills-container">
+                    <!-- Généré par JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects">
+            <div class="container">
+                <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom: 3rem;">
+                    <h2 class="section-title" id="title-projects" style="margin-bottom:0;">Mes Projets Récents</h2>
+                </div>
+                <div class="projects-grid" id="projects-container">
+                    <!-- Généré par JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer
+            style="text-align: center; padding: 3rem 1rem; border-top: 1px solid var(--glass-border); color: var(--text-secondary);">
+            <p>© 2026 Erion Berisha.</p>
+        </footer>
+    </main>
+
+    <!-- Project Modal -->
+    <div id="project-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+            <div class="modal-header-carousel" style="position: relative;">
+                <img src="" id="modal-img" class="modal-img">
+                <button id="modal-prev" class="carousel-btn left" onclick="prevModalImage()"><i data-lucide="chevron-left" width="24" height="24"></i></button>
+                <button id="modal-next" class="carousel-btn right" onclick="nextModalImage()"><i data-lucide="chevron-right" width="24" height="24"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="color: var(--accent-main); font-weight:800; text-transform:uppercase; font-size: 0.8rem; margin-bottom: 0.5rem;"
+                    id="modal-cat">Catégorie</div>
+                <h2 style="font-size: 2.5rem; font-weight:800; margin-bottom: 1.5rem;" id="modal-title">Titre</h2>
+                <div style="display:flex; gap: 0.5rem; flex-wrap:wrap; margin-bottom: 2rem;" id="modal-techs"></div>
+                <div id="modal-desc" style="font-size: 1.05rem;"></div>
+                <div class="modal-btn-group" id="modal-links"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chatbot Widget -->
+    <div class="chatbot-widget">
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <div
+                        style="width:10px; height:10px; background:#10b981; border-radius:50%; box-shadow: 0 0 10px #10b981;">
+                    </div>
+                    <span>Erion AI</span>
+                </div>
+                <button onclick="toggleChat()" style="background:none; border:none; color:inherit; cursor:pointer;"><i
+                        data-lucide="minus"></i></button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <div class="chat-msg msg-ai" id="chat-welcome">
+                    Bonjour ! Je suis l'assistant IA du portfolio d'Erion. Avez-vous une question sur son profil, ses
+                    compétences ou ses projets ?
+                </div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" class="chat-input" id="chat-input" placeholder="Posez une question..."
+                    onkeypress="if(event.key === 'Enter') sendChat()">
+                <button class="chat-send" onclick="sendChat()"><i data-lucide="send" width="18"></i></button>
+            </div>
+        </div>
+        <button class="chat-toggle" onclick="toggleChat()" id="chat-toggle-btn">
+            <i data-lucide="message-square"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- DATA SYSTEM (Fixed images and structured content) ---
+        const DATA = {
+            lang: 'fr',
+            skills: [
+                { name: "Python", level: "Avancé" },
+                { name: "SQL", level: "Avancé" },
+                { name: "RStudio", level: "Avancé" },
+                { name: "PowerBI", level: "Expert" },
+                { name: "Tableau", level: "Avancé" },
+                { name: "Excel / VBA", level: "Intermédiaire" },
+                { name: "HTML / CSS", level: "Notions" },
+                { name: "ETL", level: "Notions" }
+            ],
+            projects: [
+                {
+                    "id": 1773419722715,
+                    "images": [
+                        "https://i.postimg.cc/BvJdNBW8/Capture-d-ecran-2026-03-14-134950.png",
+                        "https://i.postimg.cc/14xdFpcm/Capture-d-ecran-2026-03-14-134648.png"
+                    ],
+                    "tech": ["Hapache Hop (ETL)", "Heidi SQL"],
+                    "linkDemo": "#",
+                    "linkCode": "#",
+                    "blocks": [
+                        {
+                            "type": "text",
+                            "fr": "__**Description du projet**__\n\nCe projet vise à collecter, filtrer et intégrer les données publiées par le Journal Officiel des Associations et Fondations d’Entreprises (JOAFE) dans un entrepôt de données hébergé sur le serveur de l’IUT de Metz. L’objectif fonctionnel est d’extraire les informations relatives aux associations régies par la loi de 1901, de suivre les créations et dissolutions par département, puis de rendre ces données exploitables pour des analyses statistiques et des indicateurs territoriaux.\n",
+                            "en": "This project aims to collect, filter and integrate the data published by the Official Journal of Business Associations and Foundations (JOAFE) in a data warehouse hosted on the Metz ITU server. The functional objective is to extract information relating to associations governed by the 1901 law, to monitor the creation and dissolution by department, and then to make this data usable for statistical analyses and territorial indicators.\n",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "**Flux et règles principales**\n\nValidation des XML, rejet des enregistrements sans thème indexé et des départements 20A/20B (non conformes au COG) — consignation dans errorData1.\nInsertion dans le data‑warehouse puis déplacement des XML vers oldData.\nEncodage UTF‑8 à vérifier lors de l’initialisation.\n",
+                            "en": "**Flow and main rules **\n\nValidation of XML, rejection of records without indexed themes and departments 20A/20B (non-compliant with cog) — logging in errorData1.\nInserting into the data warehouse then moving XML to oldData.\nUTF‑8 encoding to be checked during initialization.\n",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/3N9s0t4c/Capture-d-ecran-2026-03-22-145222.png",
+                            "align": "right",
+                            "size": "15"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "**Organisation des données et répertoires **\n\n- datasets : fichiers XML bruts à traiter. \n- errorData : CSV d’erreurs produits durant les traitements. \n- dataDimTable : CSV servant à la constitution des tables de dimensions. \n- oldData : XML déjà traités (évite les traitements doublons). \n- pipelines : flux Apache HOP (pipelines et workflows) du projet.",
+                            "en": "**Organization of data and directories **\n\n- datasets: raw XML files to be processed.\n- errorData: CSV of errors produced during processing.\n- dataDimTable: CSV used to make dimension tables.\n- oldData: XML already processed (avoids duplicate processing).\n- pipelines: Apache HOP flows (pipelines and workflows) of the project.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": " https://i.postimg.cc/d0dgjsZD/Capture-d-ecran-2026-03-22-151411.png",
+                            "align": "right",
+                            "size": "45"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "**Infrastructure et configuration**\n\nParamètres de connexion configurables via variables d’environnement : \n- DB_USER \n- DB_PASSWORD\n- DB_HOSTNAME\n- DB_DATABASE",
+                            "en": "**Infrastructure and Configuration**\n\nConfigurable connection parameters via environment variables:\n- DB_USER\n- DB_PASSWORD\n- DB_HOSTNAME\n- DB_DATABASE",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "- Paramètres de projet à vérifier : Metadata base folder, Unit tests base path, Data sets CSV Folder.\n- S’assurer que la Connection est correctement référencée dans PROJECT_HOME pour l’accès utilisateur.",
+                            "en": "- Project parameters to check: Metadata base folder, Unit tests base path, Data sets CSV Folder.\n- Ensure that the Connection is correctly referenced in PROJECT_HOME for user access.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/Kzxp7nyp/Capture-d-ecran-2026-03-22-151928.png",
+                            "align": "right",
+                            "size": "70"
+                        }
+                    ],
+                    "fr": {
+                        "title": "Intégration de Données dans un Data-Warehouse",
+                        "cat": "ETL / Data-Warehouse",
+                        "short": "Ce projet vise à collecter, filtrer et intégrer les données d'associations de la loi 1901."
+                    },
+                    "en": {
+                        "title": "Data Integration in a Data-Warehouse",
+                        "cat": "ETL / Data-Warehouse",
+                        "short": "This project aims to collect, filter and integrate the data published by the Official Journal."
+                    }
+                },
+                {
+                    "id": 1773421506824,
+                    "images": [
+                        "https://i.postimg.cc/k4szYRBt/Capture-d-ecran-2026-03-21-165114.png",
+                        "https://i.postimg.cc/hGqYS1m2/Capture-d-ecran-2026-03-21-165127.png",
+                        "https://i.postimg.cc/cCjDPRZ6/Capture-d-ecran-2026-03-21-165144.png"
+                    ],
+                    "tech": [
+                        "Excel",
+                        "Power BI"
+                    ],
+                    "linkDemo": "#",
+                    "linkCode": "#",
+                    "codeSnippets": [],
+                    "blocks": [
+                        {
+                            "type": "text",
+                            "fr": "__**Description du projet**__\n\nCe projet était sur l'enseigne Leclerc dont leur site e-commerce répertorie les fiches produits par catégorie et par magasin. Dans mon cas, j’ai ciblé la catégorie « surgelés » et extrait les informations disponibles publiquement (prix, produits) pour les magasins de Montluçon, Tours et Châteauroux.",
+                            "en": "Project Description\n\nThis project was on the Leclerc brand whose e-commerce site lists the product sheets by category and by store. In my case, I targeted the \"frozen\" category and extracted the publicly available information (prices, products) for the stores in Montluçon, Tours and Châteauroux.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/PxZpHFVZ/Capture-d-ecran-2026-03-22-155630.png",
+                            "align": "center",
+                            "size": "70"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**Logiciel de scraping de données**__\n\nDe plus, j’ai  également utilisé une extension de scraping (Web Scraper) pour récupérer automatiquement les fiches produits depuis les pages magasin du site Leclerc. Les données brutes ont ensuite été nettoyées et structurées (gestion des valeurs manquantes, correction du format de prix) avant d’être exploitées pour créer des visualisations et des rapports décisionnels.",
+                            "en": "\n\n__** Data scraping software **__\n\nIn addition, I  also used a scraping extension (Web Scraper) to automatically retrieve the product sheets from the store pages of the Leclerc site. The raw data was then cleaned and structured (management of missing values, correction of the price format) before being exploited to create visualizations and decision-making reports.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/mkmbWY4R/Capture-d-ecran-2026-03-22-170208.png",
+                            "align": "center",
+                            "size": "85"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**Etude de marché**__\n\nJ’ai réalisé une étude comparative de la catégorie « surgelés » en ciblant trois magasins Leclerc (Tours, Montluçon, Châteauroux) et en les confrontant aux principales enseignes de la GMS afin d’analyser le positionnement prix, la diversité d’offre et les parts de marché, puis de produire des recommandations opérationnelles exploitables via des dashboards.\n\n- **Méthodologie **: collecte automatisée des fiches produits, nettoyage et harmonisation des prix.\n- **Comparatif **: E.Leclerc, Carrefour, Intermarché, Auchan, Super U, Casino, Cora, Monoprix.\n- **Résultats clés **: Leclerc le moins cher (écarts jusqu’à 25–30 % vs Auchan/Carrefour), gamme la plus large (~500 références), part de marché ~22,7 %.",
+                            "en": "Market research\n\nI carried out a comparative study of the \"frozen\" category by targeting three Leclerc stores (Tours, Montluçon, Châteauroux) and comparing them with the main brands of the supermarket in order to analyze the price positioning, the diversity of offer and the market shares, then to produce operational recommendations that can be exploited via dashboards.\n\n- **Methodology **: automated collection of product sheets, cleaning and price harmonization.\n- **Comparative **: E. Leclerc, Carrefour, Intermarché, Auchan, Super U, Casino, Cora, Monoprix.\n- ** Key results **: Least expensive Leclerc (deviations up to 25-30% vs Auchan/Carrefour), widest range (~500 references), market share ~22.7%.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**Analyse SWOT**__",
+                            "en": "SWOT Analysis",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "table",
+                            "rows": 3,
+                            "cols": 3,
+                            "data_fr": [
+                                ["", "Atouts", "Handicaps"],
+                                ["Facteur interne (Leclerc)", "Prix très qualitatif  Large possibilités de choix (500 références disponibles)  Meilleure parts de marchés (donc plus de clients) ", "Image bas de gamme sur certains prix à cause de leur prix bas  Pas d’offres premium  Pas de modernisation des offres/produits"],
+                                ["Facteur externe", "Grand intérêts pour les produits bio, végétariens surgelés  Augmentation de la consommation de plats préparées (gain de temps)", "Développement de concurrence spécialisée dans le surgelés (Picard, Grand Frais)  Concurrence au niveau des prix"]
+                            ],
+                            "data_en": [
+                                ["", "Advantages", "Handicaps"],
+                                ["Internal factor (Leclerc)", "Very qualitative price Wide possibilities of choice (500 references available)  Better market share (therefore more customers)", "Low-end image on some prices because of their low price No premium offers No modernization of offers/products"],
+                                ["External factor", "Great interest in organic, frozen vegetarian products Increased consumption of prepared dishes (time saving)", "Development of competition specializing in frozen foods (Picard, Grand Frais)  Competition at the price level"]
+                            ]
+                        }
+                    ],
+                    "fr": {
+                        "title": "Datavisualisation",
+                        "cat": "Visualisation de données, Web scraping",
+                        "short": "Ce projet ciblait l'enseigne Leclerc et sa catégorie surgelés via du scraping web et Power BI."
+                    },
+                    "en": {
+                        "title": "Data Visualization",
+                        "cat": "Data visualization, Web scraping",
+                        "short": "This project targeted the Leclerc brand and its frozen category using web scraping and Power BI."
+                    }
+                },
+                {
+                    "id": 1773486407190,
+                    "images": [
+                        "https://i.postimg.cc/B6nz07bm/Part-des-25-29-ans-parmi-les-descolarisees.png"
+                    ],
+                    "tech": ["Excel", "Power BI", "Canva"],
+                    "linkDemo": "https://www.canva.com/design/DAGoLK25G8E/nrODJ_3WKVwgTBKMyZY-wA/edit?utm_content=DAGoLK25G8E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton",
+                    "linkCode": "#",
+                    "blocks": [
+                        {
+                            "type": "text",
+                            "fr": "__**Description du projet**__\n\nNous avons travaillé sur la problématique : comment identifier et expliquer les évolutions de la déscolarisation chez les 15–29 ans entre 2010 et 2021 ,  en particulier quelles tranches d’âge et quels territoires sont les plus affectés et quels facteurs (économiques, sociaux, formation/professionnalisation) peuvent expliquer ces différences.\n\n**Méthode**\n\nPréparation des données : jeu de données INSEE fourni.\nSélection d’indicateurs : taux de déscolarisation global 15–29 ans, taux par tranche d’âge (15–17 / 18–24 / 25–29), indicateurs territoriaux (taux par département/région)\nAnalyses réalisées : séries temporelles 2010–2021 pour faire des comparaisons, segmentation par tranche d’âge, corrélations simples avec variables socio‑économiques, et identification d’anomalies/points chauds via heatmap (cartes thermiques).\n\n**Principaux enseignements**\n\n- Les profils 18–24 et 25–29 montrent des valeurs différentes (transitions vers le marché du travail ou formations professionnelles).\n- Les facteurs socio‑économiques (emploi local, offres de formation) peuvent expliquer ces écarts .\n\n**Valeur ajoutée et impact**\n\n- Création d’un outil visuel et synthétique (infographie + dashboard) facilitant la prise de décisions et la compréhension des  non‑spécialistes.\n- Amélioration du travail d’équipe :  relectures rapides permettant une marge d'erreur plus faible et une efficacité plus qualitative.",
+                            "en": "We cleaned and analyzed INSEE data, selected relevant indicators, and created a clear infographic. This highlighted key learnings and communicated results accessibly, while improving our teamwork and decision-making speed.",
+                            "align_text": "left"
+                        }
+                    ],
+                    "fr": {
+                        "title": "Challenge Dataviz",
+                        "cat": "Visualisation de données, Analyse exploratoire",
+                        "short": "Comment identifier et expliquer les évolutions de la déscolarisation chez les 15–29 ans (2010-2021)."
+                    },
+                    "en": {
+                        "title": "Dataviz Challenge",
+                        "cat": "Data Visualization, Exploratory Data Analysis",
+                        "short": "How to identify and explain school dropout trends for 15-29 year olds between 2010 and 2021."
+                    }
+                },
+                {
+                    "id": 1773486632583,
+                    "images": [
+                        "https://i.postimg.cc/s25zxgYG/Capture-d-ecran-2026-03-14-125938.png"
+                    ],
+                    "tech": ["Excel", "VBA"],
+                    "linkDemo": "https://univlorraine-my.sharepoint.com/:x:/g/personal/e7041u_etu_univ-lorraine_fr/IQAPpAjiIEzYRZB8KBAQonA0AcUNmEsJwJTt9Keva5TgBro?e=jUq4MX",
+                    "linkCode": "#",
+                    "blocks": [
+                        {
+                            "type": "text",
+                            "fr": "__**Description du projet**__\n\nDéveloppement d’une application avec Microsoft Excel et Visual Basic for Applications permettant de gérer les visites de biens immobiliers via un système structuré en plusieurs feuilles.",
+                            "en": "Development of an application with Microsoft Excel and Visual Basic for Applications to manage property visits via a structured multi-sheet system.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/hj7yBcq1/Capture-d-ecran-2026-03-22-141029.png",
+                            "align": "right",
+                            "size": "60"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "Le fichier est organisé en 4 feuilles :\n\nun planning hebdomadaire (interface principale)\ntrois feuilles de données : **biens**, **visites **et **catégories **(vente / location)",
+                            "en": "The file is organized in 4 sheets:\n\na weekly schedule (main interface)\nthree datasheets: * * goods * *, * * visits * *and **categories **(sale / rental)",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "Lors de la création d’une visite dans le planning, les informations saisies (date, heure, bien, visiteur, type) sont automatiquement enregistrées et mises à jour dans les différentes feuilles de données. Cela permet de structurer les informations comme une base de données relationnelle directement dans Excel.\n\nL’application s’appuie aussi sur plusieurs UserForms pour faciliter l’utilisation :\n\n**CalendarFormPlanning **: permet de sélectionner une date facilement pour planifier une visite\n**UserFormAjouterBien **: interface pour ajouter un nouveau bien\n**UserFormChoisirBien **: permet de sélectionner un bien existant lors de la planification",
+                            "en": "When creating a visit in the schedule, the information entered (date, time, good, visitor, type) is automatically saved and updated in the various datasheets. This allows information to be structured as a relational database directly in Excel.\n\nThe application also relies on several UserForms to facilitate use:\n\n**CalendarFormPlanning **: allows you to select a date easily to schedule a visit\n**UserFormAddGood **: interface to add a new good\n**UserFormChooseGood **: allows you to select an existing good during planning",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/mZPRPHTX/Capture-d-ecran-2026-03-22-144058.png",
+                            "align": "right",
+                            "size": "70"
+                        }
+                    ],
+                    "fr": {
+                        "title": "Immobilier",
+                        "cat": "Développement (Web/Logiciel)",
+                        "short": "Développement d’une application de gestion immobilière avec Microsoft Excel et VBA."
+                    },
+                    "en": {
+                        "title": "Real Estate",
+                        "cat": "Development (Web/Software)",
+                        "short": "Development of a property management application with Microsoft Excel and VBA."
+                    }
+                },
+                {
+                    "id": 1774021327732,
+                    "images": [
+                        "https://i.postimg.cc/ZnyPB1t3/Capture-d-ecran-2026-03-20-164623.png",
+                        "https://i.postimg.cc/nVQwQW1S/Capture-d-ecran-2026-03-20-164602.png",
+                        "https://i.postimg.cc/jjLhYWg3/Capture-d-ecran-2026-03-20-164610.png"
+                    ],
+                    "tech": ["Rstudio"],
+                    "linkDemo": "#",
+                    "linkCode": "#",
+                    "blocks": [
+                        {
+                            "type": "text",
+                            "fr": "__**Description du projet**__\n\nJ’ai extrait, nettoyé et analysé des séries temporelles Eurostat sur le transport aérien pour produire des indicateurs et des prévisions exploitables. Le travail porte notamment sur les flottes et le trafic d’aéronefs (France, Bulgarie et autres séries sélectionnées) et combine analyses descriptives, décomposition saisonnière, nettoyage (tsclean) et modèles de prévision (SES, Holt, Holt‑Winters) avec comparaisons pré‑/post‑COVID.\n\nPoints clés du travail réalisé\n\n- **Source **: uniquement Eurostat (export via l’explorateur de données).\n- **Données traitées** : séries mensuelles et annuelles (trafic, nombre de flottes) ; gestion des NA (tsclean) et transformation logarithmique pour décomposition STL.\n- **Méthodes **: lissage exponentiel simple (SES), Holt (amorti/non amorti), Holt‑Winters, décomposition MSTL, seasonplots pour comparer pré‑COVID / COVID / post‑COVID.\n- **Comparaisons **: France vs Bulgarie (séries, prévisions et trajectoires de reprise); comparaison des prévisions réalisées en 2018/2019 avec la réalité observée jusqu’en 2024.\n- **Prévisions **: horizon multi‑années (36 mois) pour estimer la reprise du trafic et l’évolution des flottes.\n- **Livrables **: scripts R (fpp2/forecast), graphiques temporels et seasonplots, jeux de données nettoyés et visualisations prêtes à intégrer dans un rapport ou une présentation orale.",
+                            "en": "I extracted, cleaned and analyzed Eurostat time series on air transport to produce actionable indicators and forecasts, focusing on aircraft fleets and traffic.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/d368MxD2/Capture-d-ecran-2026-03-22-172441.png",
+                            "align": "center",
+                            "size": "65"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "**Nettoyage et préparation**\n\n- Gestion des valeurs manquantes et anomalies : utilisation de tsclean pour détecter et corriger outliers et NA.\n- Transformations : application d’une transformation logarithmique lorsque nécessaire pour stabiliser la variance avant décomposition (STL/MSTL).\n- Fenêtrage pour comparaisons temporelles : constitution de sous‑séries (ex. fenêtre 2010–2018 vs 2019–2021) pour évaluer changements structurels.",
+                            "en": "Cleaning and preparation involving missing values management with tsclean, log transformations, and windowing for temporal comparisons.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/Yqj4q9Pt/Capture-d-ecran-2026-03-23-182614.png",
+                            "align": "center",
+                            "size": "45"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "**Analyses statistiques**\n\n- Analyses descriptives : séries temporelles, seasonplots et graphiques de trajectoire par pays pour visualiser saisonnalité et tendances.\n- Décomposition : MSTL/STL pour isoler tendance, saisonnalité et résidus.\n- Modèles de prévision : lissage exponentiel simple (SES), Holt (avec et sans amortissement), Holt‑Winters (saisonnier).\n- Horizon : prévisions multi‑années (ex. 36 mois) pour estimer la trajectoire de reprise du trafic et l’évolution des flottes.",
+                            "en": "Descriptive analyses, STL/MSTL decomposition, and forecasting models including SES, Holt, and Holt-Winters applied to a 36-month horizon.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/fk4hNBFJ/Capture-d-ecran-2026-03-23-185502.png",
+                            "align": "center",
+                            "size": "45"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "**Comparaisons**\n\n- France vs Bulgarie : analyse des profils saisonniers, intensité de la chute COVID et vitesse/ampleur de la reprise.\n- Pré/post‑COVID : mise en évidence des changements de saisonnalité et de tendance.\n- Évaluation des prévisions: analyse des écarts entre prévisions réalisées avant la pandémie et la réalité observée.",
+                            "en": "Comparisons across countries (France vs Bulgaria) and periods (pre/post-COVID) to evaluate forecast deviations.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/4dLJrvs7/Capture-d-ecran-2026-03-23-190203.png",
+                            "align": "center",
+                            "size": "100"
+                        }
+                    ],
+                    "fr": {
+                        "title": "Prévisions temporelles",
+                        "cat": "Visualisation (Dataviz), Analyse exploratoire",
+                        "short": "Extraction, nettoyage et analyse de séries temporelles Eurostat sur le transport aérien."
+                    },
+                    "en": {
+                        "title": "Temporal forecasts",
+                        "cat": "Data Analysis, Exploratory Data Analysis",
+                        "short": "Extraction, cleaning and analysis of Eurostat time series on air transport."
+                    }
+                },
+                {
+                    "id": 1774025147926,
+                    "images": [
+                        "https://i.postimg.cc/wMcrRydQ/Capture-d-ecran-2026-03-21-172808.png",
+                        "https://i.postimg.cc/1zqJNnGG/Capture-d-ecran-2026-03-21-172823.png"
+                    ],
+                    "tech": [
+                        "Microsoft Access",
+                        "VBA"
+                    ],
+                    "linkDemo": "#",
+                    "linkCode": "#",
+                    "blocks": [
+                        {
+                            "type": "text",
+                            "fr": "__**Description du projet**__\n\nPour ce projet, il fallait concevoir et implémenté une application de gestion sous forme d’une base de données relationnelle et des scripts SQL associés. Notre objectif était de modéliser le suivi des magasins vendant/louant des films et des supports (DVD), ainsi que la gestion des clients et des cautions.\n\n__**Contexte et périmètre**__\n\n- **Portée **: gestion des magasins (video‑clubs), des films, des supports (DVD), des genres, des clients et des cautions.\n- **Données fournies (Kaggle)**: jeux de tables relationnelles (ex. Films, DVD, Genres, Clients, Cautions).\n\n__**Description des tables**__\n\n- **Cautions:** enregistrement des sommes déposées en garantie par les clients pour les locations (ou garanties associées aux achats).\n",
+                            "en": "This project consists of designing, implementing and documenting a relational database from a business specification and provided datasets (flat files). I took charge of the entire cycle: needs analysis, modelling (MCD), derivation in relational schema, implementation in a target DBMS, feeding, validation and documentation, ensuring the quality, consistency and integrity of the data.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/SRN6VJMz/Capture-d-ecran-2026-03-23-174351.png",
+                            "align": "center",
+                            "size": "30"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "- **Clients:** gestion des clients inscrits (locataires/acheteurs).\n",
+                            "en": "",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/fRZ9v3Qb/Capture-d-ecran-2026-03-23-174307.png",
+                            "align": "center",
+                            "size": "45"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "- **DVD:** table des exemplaires physiques / supports (copies concrètes disponibles dans les magasins).\n",
+                            "en": "",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/Px6pXKCJ/Capture-d-ecran-2026-03-23-172643.png",
+                            "align": "center",
+                            "size": "50"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "- **Genres:** classification thématique des films (action, comédie, drame, etc.).\n",
+                            "en": "",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/prhT2vN7/Capture-d-ecran-2026-03-23-172703.png",
+                            "align": "center",
+                            "size": "15"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "- **Films:** catalogue des œuvres (titres, metadata) indépendamment des exemplaires physiques.\n",
+                            "en": "",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/WpGpw5N5/Capture-d-ecran-2026-03-24-172328.png",
+                            "align": "center",
+                            "size": "80"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**VBA**__\n\nAfin de créer les formulaires nécessaires à la finalisation du projet, il fallait utiliser des macros VBA (Visual Basic)  pour coder les boutons suivants:\n\n**Bouton de retour DVD:** \n\n- Récupère l’id du DVD sélectionné (Me.idDVD).\n- Vérifie qu’il n’est pas vide/null, sinon affiche un message et quitte.\n- Construit et exécute une requête SQL UPDATE qui met à Null les champs idClient et dateRetour pour ce DVD (libération du DVD).\n- Recharge le formulaire et gère les erreurs en affichant un message si l’UPDATE échoue.",
+                            "en": "In order to create the forms required, VBA macros were used to code buttons like the DVD return button which updates SQL records to release a DVD.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/sgtb8RKm/Capture-d-ecran-2026-03-24-172520.png",
+                            "align": "center",
+                            "size": "60"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "**Bouton de nouvel emprunt:**\n\n- Calcule si le client peut emprunter : obtient le nombre max d’emprunts autorisés (DLookup dans Cautions) et le nombre d’emprunts actuels (DLookup dans empruntsActuels), puis compare.\n- Si autorisé : demande le numéro du DVD (InputBox) puis exécute un UPDATE pour affecter numClient au DVD, fixer dateLocation à la date du jour et incrémenter nbLocation de 1 pour ce DVD.\n- Exécute la requête (DoCmd.RunSQL) et recharge la requête/contrôle req_SF_clientDVD.\n- Si non autorisé, affiche un message indiquant que la limite est atteinte.",
+                            "en": "New loan button logic calculates if the client is eligible to borrow using DLookup on limits and current loans, then runs an UPDATE SQL query to link the DVD to the client.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/1XsQdZmV/Capture-d-ecran-2026-03-24-172411.png",
+                            "align": "center",
+                            "size": "65"
+                        }
+                    ],
+                    "fr": {
+                        "title": "Conception et Implémentation d'une Base de Données",
+                        "cat": "Développement logiciel, Data Engineering",
+                        "short": "Conception et implémentation d’une base de données relationnelle sous Microsoft Access."
+                    },
+                    "en": {
+                        "title": "Database Design and Implementation",
+                        "cat": "Software Development, Data Engineering",
+                        "short": "Design and implementation of a relational database under Microsoft Access."
+                    }
+                }
+            ],
+            text: {
+                fr: {
+                    greeting: 'Bonjour, je suis <br><span class="text-gradient">Erion Berisha.</span>',
+                    role: "Étudiant en 2ème année BUT Science des Données parcours EMS.",
+                    bio: "Passionné par les chiffres, les algorithmes et leur impact dans le monde réel. Mon objectif est d'approfondir l'analyse de données et l'intelligence artificielle pour résoudre des problèmes concrets.",
+                    btncv: "Mon CV",
+                    titleSkills: "Compétences Techniques",
+                    titleProj: "Mes Projets Récents",
+                    aiWelcome: "Bonjour ! Je suis l'assistant IA du portfolio d'Erion. Avez-vous une question sur son profil, ses compétences ou ses projets ?",
+                    aiError: "Désolé, l'IA est temporairement indisponible.",
+                    navProfile: "Profil",
+                    navSkills: "Compétences",
+                    navProjects: "Projets"
+                },
+                en: {
+                    greeting: 'Hello, I\'m <br><span class="text-gradient">Erion Berisha.</span>',
+                    role: "2nd Year Data Science Student (EMS Specialization).",
+                    bio: "Passionate about numbers, algorithms, and their real-world impact. My goal is to deepen data analysis and AI to solve concrete problems.",
+                    btncv: "My Resume",
+                    titleSkills: "Technical Skills",
+                    titleProj: "My Recent Projects",
+                    aiWelcome: "Hello! I'm the AI assistant for Erion's portfolio. Do you have any questions about his profile, skills, or projects?",
+                    aiError: "Sorry, the AI is temporarily unavailable.",
+                    navProfile: "Profile",
+                    navSkills: "Skills",
+                    navProjects: "Projects"
+                }
+            }
+        };
+
+        // --- RENDER FUNCTIONS ---
+        function render() {
+            const t = DATA.text[DATA.lang];
+
+            // Texts
+            document.getElementById('txt-greeting').innerHTML = t.greeting;
+            document.getElementById('txt-role').innerText = t.role;
+            document.getElementById('txt-bio').innerText = t.bio;
+            document.getElementById('btn-cv').innerHTML = `<i data-lucide="download" width="18"></i> ${t.btncv}`;
+            document.getElementById('title-skills').innerText = t.titleSkills;
+            document.getElementById('title-projects').innerText = t.titleProj;
+            document.getElementById('chat-welcome').innerText = t.aiWelcome;
+            document.getElementById('lang-ind').innerText = DATA.lang.toUpperCase();
+
+            // Navbar
+            document.querySelector('[data-i18n="navProfile"]').innerText = t.navProfile;
+            document.querySelector('[data-i18n="navSkills"]').innerText = t.navSkills;
+            document.querySelector('[data-i18n="navProjects"]').innerText = t.navProjects;
+
+            // CV Link
+            document.getElementById('btn-cv').href = DATA.lang === 'fr' ? 'CV.pdf' : 'CV_anglais.pdf';
+
+            // Skills
+            const skillsHtml = DATA.skills.map((s, index) => {
+                let percent = "50%";
+                if (s.level.toLowerCase().includes("expert")) percent = "95%";
+                if (s.level.toLowerCase().includes("avancé")) percent = "80%";
+                if (s.level.toLowerCase().includes("intermédiaire")) percent = "50%";
+                if (s.level.toLowerCase().includes("notions")) percent = "25%";
+
+                return `
+                <div class="skill-card reveal" style="transition-delay: ${index * 0.1}s">
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:0.8rem;">
+                        <div class="skill-name">${s.name}</div>
+                        <div class="skill-level">${s.level}</div>
+                    </div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-fill" style="width: ${percent};"></div>
+                    </div>
+                </div>
+            `}).join('');
+            document.getElementById('skills-container').innerHTML = skillsHtml;
+
+            // Projects
+            const projectsHtml = DATA.projects.map((p, index) => {
+                const info = p[DATA.lang];
+                const techTags = p.tech.slice(0, 3).map(tech => `<span class="tech-tag">${tech}</span>`).join('');
+                const imgSrc = p.images && p.images.length > 0 ? p.images[0] : (p.image || "");
+                const shortDesc = info.short ? info.short : (info.desc ? info.desc.replace(/<[^>]*>?/gm, '').substring(0, 100) : '');
+
+                return `
+                <div class="project-wrapper reveal" style="transition-delay: ${(index % 4) * 0.15}s">
+                    <div class="project-card" onclick="openModal(${p.id})">
+                        <div class="project-img-wrapper"><img src="${imgSrc}" class="project-img" loading="lazy"></div>
+                        <div class="project-content">
+                            <div class="project-cat">${info.cat}</div>
+                            <h3 class="project-title">${info.title}</h3>
+                            <div class="project-desc">${shortDesc}...</div>
+                            <div class="project-tech">${techTags} ${p.tech.length > 3 ? `<span class="tech-tag">+${p.tech.length - 3}</span>` : ''}</div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            document.getElementById('projects-container').innerHTML = projectsHtml;
+
+            lucide.createIcons();
+        }
+
+        // --- INTERACTIVITY ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('light-mode');
+            const btn = document.getElementById('btn-theme');
+            if (html.classList.contains('light-mode')) {
+                btn.innerHTML = '<i data-lucide="sun" width="18" height="18"></i>';
+            } else {
+                btn.innerHTML = '<i data-lucide="moon" width="18" height="18"></i>';
+            }
+            lucide.createIcons();
+        }
+
+        function toggleLang() {
+            DATA.lang = DATA.lang === 'fr' ? 'en' : 'fr';
+            render();
+        }
+
+        // --- MODAL & CAROUSEL ---
+        let currentProjectImages = [];
+        let currentImageIndex = 0;
+
+        function updateModalImage() {
+            if(currentProjectImages.length > 0) {
+                document.getElementById('modal-img').src = currentProjectImages[currentImageIndex];
+            }
+        }
+
+        function prevModalImage() {
+            if(currentProjectImages.length > 1) {
+                currentImageIndex = (currentImageIndex - 1 + currentProjectImages.length) % currentProjectImages.length;
+                updateModalImage();
+            }
+        }
+
+        function nextModalImage() {
+            if(currentProjectImages.length > 1) {
+                currentImageIndex = (currentImageIndex + 1) % currentProjectImages.length;
+                updateModalImage();
+            }
+        }
+
+        function openModal(id) {
+            const p = DATA.projects.find(x => x.id === id);
+            const info = p[DATA.lang];
+            
+            currentProjectImages = p.images && p.images.length > 0 ? p.images : (p.image ? [p.image] : []);
+            currentImageIndex = 0;
+            updateModalImage();
+            
+            document.getElementById('modal-prev').style.display = currentProjectImages.length > 1 ? 'flex' : 'none';
+            document.getElementById('modal-next').style.display = currentProjectImages.length > 1 ? 'flex' : 'none';
+            
+            document.getElementById('modal-cat').innerText = info.cat;
+            document.getElementById('modal-title').innerText = info.title;
+
+            let contentHtml = '';
+            if (p.blocks) {
+                p.blocks.forEach(block => {
+                    if (block.type === "text") {
+                        let txt = DATA.lang === 'fr' ? block.fr : block.en;
+                        if (txt) {
+                            txt = txt.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                            txt = txt.replace(/\_\_(.*?)\_\_/g, '<u>$1</u>');
+                            txt = txt.replace(/\n/g, '<br>');
+                            contentHtml += `<p style="text-align:${block.align_text || 'left'}; margin-bottom:1rem; line-height:1.6;">${txt}</p>`;
+                        }
+                    } else if (block.type === "image") {
+                        let alignCss = block.align === 'center' ? 'margin: 0 auto; display:block;' : `float:${block.align}; margin: 10px;`;
+                        contentHtml += `<img src="${block.url}" style="width:${block.size || 100}%; max-width:100%; border-radius:12px; ${alignCss}">`;
+                        if (block.align !== 'center') contentHtml += `<div style="clear:both;"></div>`;
+                    } else if (block.type === "table") {
+                        const data = DATA.lang === 'fr' ? block.data_fr : block.data_en;
+                        if (data) {
+                            contentHtml += `<div style="overflow-x:auto;"><table style="width:100%; margin-bottom:1.5rem; border-collapse:collapse; background:var(--bg-secondary); border-radius:8px; overflow:hidden;">`;
+                            data.forEach((row, i) => {
+                                contentHtml += `<tr>`;
+                                row.forEach(cell => {
+                                    if (i === 0) contentHtml += `<th style="border-bottom:1px solid var(--glass-border); padding:12px; text-align:left; background:rgba(0,0,0,0.2); font-weight:bold; color:var(--accent-main);">${cell}</th>`;
+                                    else contentHtml += `<td style="border-bottom:1px solid var(--glass-border); padding:10px;">${cell}</td>`;
+                                });
+                                contentHtml += `</tr>`;
+                            });
+                            contentHtml += `</table></div>`;
+                        }
+                    }
+                });
+            } else {
+                contentHtml = info.desc || "";
+            }
+            if (p.codeSnippets && p.codeSnippets.length > 0) {
+                p.codeSnippets.forEach(snippet => {
+                    contentHtml += `<pre style="background:#1e1e1e; padding:15px; border-radius:8px; margin-bottom:1rem; overflow-x:auto;"><code style="color:var(--text-primary); font-family:monospace;">${snippet.code}</code></pre>`;
+                });
+            }
+
+            document.getElementById('modal-desc').innerHTML = contentHtml;
+            document.getElementById('modal-techs').innerHTML = p.tech.map(t => `<span class="tech-tag" style="background:var(--accent-glow); color:var(--text-primary);">${t}</span>`).join('');
+
+            const linksDiv = document.getElementById('modal-links');
+            linksDiv.innerHTML = '';
+            if (p.linkDemo && p.linkDemo !== '#') {
+                linksDiv.innerHTML += `<a href="${p.linkDemo}" target="_blank" class="btn-primary" style="margin-right:10px;"><i data-lucide="external-link" width="18"></i> Lien / Demo</a>`;
+            }
+            if (p.linkCode && p.linkCode !== '#') {
+                linksDiv.innerHTML += `<a href="${p.linkCode}" target="_blank" class="btn-primary" style="background:var(--bg-secondary); border:1px solid var(--glass-border);"><i data-lucide="code" width="18"></i> Code</a>`;
+            }
+            if (p.code && !p.linkDemo) {
+                linksDiv.innerHTML += `<a href="${p.code}" target="_blank" class="btn-primary"><i data-lucide="external-link" width="18"></i> Voir le Lien</a>`;
+            }
+
+            document.getElementById('project-modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('project-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- AI CHATBOT SYSTEM ---
+        let chatOpen = false;
+        function toggleChat() {
+            chatOpen = !chatOpen;
+            const win = document.getElementById('chat-window');
+            if (chatOpen) {
+                win.classList.add('active');
+                setTimeout(() => document.getElementById('chat-input').focus(), 300);
+            } else {
+                win.classList.remove('active');
+            }
+        }
+
+        async function sendChat() {
+            const input = document.getElementById('chat-input');
+            const txt = input.value.trim();
+            if (!txt) return;
+
+            input.value = '';
+            const body = document.getElementById('chat-body');
+
+            // User msg
+            body.innerHTML += `<div class="chat-msg msg-user">${txt.replace(/</g, "&lt;")}</div>`;
+            body.scrollTop = body.scrollHeight;
+
+            // Loader
+            const id = 'loader-' + Date.now();
+            body.innerHTML += `<div id="${id}" class="chat-msg msg-ai typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+            body.scrollTop = body.scrollHeight;
+
+            // Simulated Local AI Logic for stability, since free APIs without authentication are flaky
+            setTimeout(() => {
+                const typingEl = document.getElementById(id);
+                if (typingEl) typingEl.remove();
+
+                let response = "";
+                const msgLower = txt.toLowerCase();
+
+                if (msgLower.includes("bonjour") || msgLower.includes("salut")) {
+                    response = "Bonjour ! Comment puis-je vous aider à découvrir le portfolio d'Erion ?";
+                } else if (msgLower.includes("compétence") || msgLower.includes("skill") || msgLower.includes("langage") || msgLower.includes("technologie")) {
+                    response = "Erion maîtrise très bien Python, SQL, et RStudio pour l'analyse de données. Côté datavisualisation, il utilise couramment PowerBI, Tableau et Excel !";
+                } else if (msgLower.includes("projet") || msgLower.includes("portfolio") || msgLower.includes("réalisation")) {
+                    response = "Il a réalisé de superbes projets : une intégration ETL avec Apache Hop, des dashboards PowerBI très poussés pour Leclerc, et des modèles de prévision temporelle.";
+                } else if (msgLower.includes("contact") || msgLower.includes("email") || msgLower.includes("linkedin") || msgLower.includes("joindre")) {
+                    response = "Pour le contacter, vous pouvez vous rendre sur son LinkedIn (lien sur la page d'accueil) ou télécharger son CV qui contient toutes ses coordonnées.";
+                } else if (msgLower.includes("stage") || msgLower.includes("alternance") || msgLower.includes("travail") || msgLower.includes("disponible")) {
+                    response = "Erion est motivé par de nouveaux défis en Data Science ! N'hésitez pas à télécharger son CV en haut pour le contacter directement.";
+                } else {
+                    response = "Je suis l'IA de présentation d'Erion. Je peux vous parler de ses compétences, de ses données, et de ses incroyables projets ! Que voulez-vous savoir ?";
+                }
+
+                body.innerHTML += `<div class="chat-msg msg-ai">${response}</div>`;
+                body.scrollTop = body.scrollHeight;
+            }, 1200);
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+
+            // Custom Cursor Logic
+            const cursor = document.getElementById('cc-main');
+            const follower = document.getElementById('cc-follower');
+            let mouseX = 0, mouseY = 0, fX = 0, fY = 0;
+            
+            if(window.matchMedia("(pointer: fine)").matches) {
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+                });
+                
+                function animateFollower() {
+                    fX += (mouseX - fX) * 0.2;
+                    fY += (mouseY - fY) * 0.2;
+                    follower.style.transform = `translate3d(${fX}px, ${fY}px, 0) translate(-50%, -50%)`;
+                    requestAnimationFrame(animateFollower);
+                }
+                animateFollower();
+                
+                // Bind hovers post-render
+                document.querySelectorAll('a, button, .project-card, .skill-card, .chat-toggle, .carousel-btn, .modal-close').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+                });
+            }
+
+            // Reveal Animation Cascade Logic
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+            
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+            }, 100);
+
+            // Navbar Scrollspy Active State Logic
+            const sections = document.querySelectorAll("section");
+            const navLinks = document.querySelectorAll(".nav-links a");
+
+            const observer = new IntersectionObserver((entries) => {
+                let activeId = "";
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        activeId = entry.target.id;
+                    }
+                });
+                if (activeId) {
+                    navLinks.forEach(link => {
+                        link.classList.remove("active");
+                        if (link.getAttribute("href") === "#" + activeId) {
+                            link.classList.add("active");
+                        }
+                    });
+                }
+            }, { threshold: 0.3, rootMargin: "-80px 0px 0px 0px" });
+
+            sections.forEach(sec => observer.observe(sec));
+
+            // Close modal on outside click
+            window.onclick = function (event) {
+                const modal = document.getElementById('project-modal');
+                if (event.target == modal) {
+                    closeModal();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
