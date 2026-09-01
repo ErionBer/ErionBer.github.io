@@ -44,7 +44,7 @@
                     <div class="reveal" style="flex: 1; min-width: 300px;">
                         <h1 id="txt-greeting">Bonjour, je suis <br><span class="text-gradient">Erion Berisha.</span>
                         </h1>
-                        <p class="subtitle" id="txt-role">Étudiant en 3ème année BUT Science des Données parcours EMS.
+                        <p class="subtitle" id="txt-role">Étudiant en 2ème année BUT Science des Données parcours EMS.
                         </p>
                         <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.05rem;" id="txt-bio">
                             Passionné par les chiffres, les algorithmes et leur impact dans le monde réel. Mon objectif
@@ -106,8 +106,10 @@
             <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
             <div class="modal-header-carousel" style="position: relative;">
                 <img src="" id="modal-img" class="modal-img">
-                <button id="modal-prev" class="carousel-btn left" onclick="prevModalImage()"><i data-lucide="chevron-left" width="24" height="24"></i></button>
-                <button id="modal-next" class="carousel-btn right" onclick="nextModalImage()"><i data-lucide="chevron-right" width="24" height="24"></i></button>
+                <button id="modal-prev" class="carousel-btn left" onclick="prevModalImage()"><i
+                        data-lucide="chevron-left" width="24" height="24"></i></button>
+                <button id="modal-next" class="carousel-btn right" onclick="nextModalImage()"><i
+                        data-lucide="chevron-right" width="24" height="24"></i></button>
             </div>
             <div class="modal-body">
                 <div style="color: var(--accent-main); font-weight:800; text-transform:uppercase; font-size: 0.8rem; margin-bottom: 0.5rem;"
@@ -158,13 +160,128 @@
                 { name: "Python", level: "Intermédiaire" },
                 { name: "SQL", level: "Avancé" },
                 { name: "RStudio", level: "Avancé" },
-                { name: "PowerBI", level: "Avancé" },
+                { name: "PowerBI", level: "Expert" },
                 { name: "Tableau", level: "Avancé" },
                 { name: "Excel / VBA", level: "Intermédiaire" },
-                { name: "HTML / CSS", level: "Intermédiaire" },
-                { name: "ETL", level: "Avancé" }
+                { name: "HTML / CSS", level: "Notions" },
+                { name: "ETL", level: "Notions" }
             ],
             projects: [
+                {
+                    "id": 20260707,
+                    "images": [
+                        "https://i.postimg.cc/Jn61hyQv/Screenshot-2026-09-01-225546.png",
+                        "https://i.postimg.cc/d3gw8zpF/Screenshot-2026-09-01-225624.png"
+                    ],
+                    "tech": [
+                        "Python", "DocTR (OCR)", "OpenVINO", "NLP (spaCy)", "Power BI", "DuckDB"
+                    ],
+                    "linkDemo": "#",
+                    "linkCode": "#",
+                    "blocks": [
+                        {
+                            "type": "text",
+                            "fr": "Stage de 9 semaines — Laboratoire CREaT, Université de Lorraine, Metz\n\nCe projet porte sur l'exploitation d'un corpus d'environ **35 000 archives parlementaires françaises** (de 1880 à nos jours), représentant environ **700 000 pages PDF**. L'objectif était de transformer ces archives hétérogènes en données textuelles structurées et exploitables pour des analyses linguistiques et sociologiques.",
+                            "en": "9-week internship — CREaT Laboratory, University of Lorraine, Metz\n\nThis project involves processing approximately **35,000 French parliamentary archives** (from 1880 to the present day), representing around **700,000 PDF pages**. The objective was to transform these heterogeneous archives into structured textual data usable for linguistic and sociological analysis.",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**1. Collecte des archives parlementaires**__\n\nRécupération automatisée des comptes rendus parlementaires au format PDF.\n- Scraping avec **Requests** et **BeautifulSoup**\n- Organisation automatique des fichiers\n- Utilisation du **multithreading** pour accélérer la collecte",
+                            "en": "__**1. Collecting parliamentary archives**__\n\nAutomated retrieval of parliamentary reports in PDF format.\n- Scraping with **Requests** and **BeautifulSoup**\n- Automatic file organization\n- **Multithreading** to speed up the collection",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/6Qk2pvb3/Screenshot-2026-09-01-215927.png",
+                            "align": "center",
+                            "size": "85"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**2. Collecte des données sur les députés**__\n\nRécupération des informations disponibles sur les députés.\n- Scraping des fiches de l'**Assemblée nationale**\n- Structuration des informations récupérées",
+                            "en": "__**2. Collecting data on members of parliament**__\n\nRetrieving available information on members of parliament.\n- Scraping pages from the **National Assembly** website\n- Structuring the retrieved information",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/fypmmrBh/Screenshot-2026-09-01-222851.png",
+                            "align": "center",
+                            "size": "85"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**3. Traitement des comptes rendus**__\n\nTraitement automatisé de plusieurs milliers de fichiers PDF.\n- Détection des documents contenant du texte exploitable\n- Extraction directe du texte lorsque celui-ci est disponible\n- Orientation des documents numérisés vers l'OCR",
+                            "en": "__**3. Processing parliamentary reports**__\n\nAutomated processing of thousands of PDF files.\n- Detection of documents containing exploitable text\n- Direct text extraction when available\n- Routing scanned documents to OCR",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/8CPwmqTS/Screenshot-2026-09-01-215448.png",
+                            "align": "center",
+                            "size": "85"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**4. OCR des archives numérisées**__\n\nCette étape représente l'une des parties les plus importantes du projet.\n- Utilisation de **DocTR** pour la reconnaissance de caractères\n- Prétraitement des pages avec **NumPy**\n- Détection et séparation des colonnes\n- Optimisation de l'inférence avec **OpenVINO**",
+                            "en": "__**4. OCR of scanned archives**__\n\nThis step represents one of the most important parts of the project.\n- Using **DocTR** for character recognition\n- Page preprocessing with **NumPy**\n- Column detection and separation\n- Inference optimization with **OpenVINO**",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/Bb1m1H4R/Screenshot-2026-09-01-220638.png",
+                            "align": "center",
+                            "size": "100"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**5. Correction des erreurs OCR**__\n\n**Problème :** L'OCR peut introduire des erreurs dans les noms et les termes.\n\n**Solution :** Utilisation du **fuzzy matching** pour comparer le texte reconnu avec les informations connues.\n\n**Exemple :**\nM. Chaban-Delms → **Jacques Chaban-Delmas**",
+                            "en": "__**5. OCR error correction**__\n\n**Problem:** OCR can introduce errors in names and terms.\n\n**Solution:** Using **fuzzy matching** to compare recognized text with known information.\n\n**Example:**\nM. Chaban-Delms → **Jacques Chaban-Delmas**",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**6. Traitement NLP**__\n\n- Nettoyage et normalisation des textes\n- Tokenisation\n- Lemmatisation avec **spaCy**\n- Identification des termes recherchés\n- Conservation du contexte des occurrences\n- Génération des données structurées au format **JSONL**",
+                            "en": "__**6. NLP processing**__\n\n- Text cleaning and normalization\n- Tokenization\n- Lemmatization with **spaCy**\n- Identification of target terms\n- Preserving occurrence context\n- Generating structured data in **JSONL** format",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/jjSQ7mb4/Screenshot-2026-09-01-223414.png",
+                            "align": "center",
+                            "size": "85"
+                        },
+                        {
+                            "type": "text",
+                            "fr": "__**7. Modélisation de la base de données**__\n\n- Importation des données dans **DuckDB**\n- Création d'un **modèle en étoile**\n- Organisation des dimensions : orateurs, mandats, séances, temps, thèmes\n- Structuration des occurrences textuelles",
+                            "en": "__**7. Database modeling**__\n\n- Data import into **DuckDB**\n- Creation of a **star schema**\n- Organizing dimensions: speakers, mandates, sessions, time, themes\n- Structuring textual occurrences",
+                            "align_text": "left"
+                        },
+                        {
+                            "type": "image",
+                            "url": "https://i.postimg.cc/KjPgVDbm/Screenshot-2026-09-01-223551.png",
+                            "align": "center",
+                            "size": "85"
+                        },
+                        
+                        {
+                            "type": "text",
+                            "fr": "__**8. Limites et perspectives**__\n\n**Limites :**\n- Qualité variable des archives historiques\n- Erreurs résiduelles de l'OCR\n- Temps de traitement important sur les documents numérisés\n- Corpus encore partiellement traité\n\n**Perspectives :**\n- Amélioration de la correction des erreurs OCR\n- Traitement du reste du corpus\n- Analyses lexicales plus avancées\n- Utilisation éventuelle d'ALCESTE",
+                            "en": "__**8. Limitations and perspectives**__\n\n**Limitations:**\n- Variable quality of historical archives\n- Residual OCR errors\n- Significant processing time on scanned documents\n- Corpus still partially processed\n\n**Perspectives:**\n- Improved OCR error correction\n- Processing the remaining corpus\n- More advanced lexical analyses\n- Potential use of ALCESTE",
+                            "align_text": "left"
+                        }
+                    ],
+                    "fr": {
+                        "title": "Analyse Sémantique d'Archives Parlementaires (Stage)",
+                        "cat": "Data Engineering, NLP, OCR, Computer Vision",
+                        "short": "Stage de 9 semaines — Laboratoire CREaT, Université de Lorraine. Collecte, OCR, correction, NLP, modélisation et dashboard Power BI."
+                    },
+                    "en": {
+                        "title": "Semantic Analysis of Parliamentary Archives (Internship)",
+                        "cat": "Data Engineering, NLP, OCR, Computer Vision",
+                        "short": "9-week internship — CREaT Lab, University of Lorraine. Collection, OCR, correction, NLP, modeling, and Power BI dashboard."
+                    }
+                },
                 {
                     "id": 1773419722715,
                     "images": [
@@ -345,6 +462,7 @@
                         "https://i.postimg.cc/s25zxgYG/Capture-d-ecran-2026-03-14-125938.png"
                     ],
                     "tech": ["Excel", "VBA"],
+                    "linkDemo": "https://univlorraine-my.sharepoint.com/:x:/g/personal/e7041u_etu_univ-lorraine_fr/IQAPpAjiIEzYRZB8KBAQonA0AcUNmEsJwJTt9Keva5TgBro?e=jUq4MX",
                     "linkCode": "#",
                     "blocks": [
                         {
@@ -694,20 +812,20 @@
         let currentImageIndex = 0;
 
         function updateModalImage() {
-            if(currentProjectImages.length > 0) {
+            if (currentProjectImages.length > 0) {
                 document.getElementById('modal-img').src = currentProjectImages[currentImageIndex];
             }
         }
 
         function prevModalImage() {
-            if(currentProjectImages.length > 1) {
+            if (currentProjectImages.length > 1) {
                 currentImageIndex = (currentImageIndex - 1 + currentProjectImages.length) % currentProjectImages.length;
                 updateModalImage();
             }
         }
 
         function nextModalImage() {
-            if(currentProjectImages.length > 1) {
+            if (currentProjectImages.length > 1) {
                 currentImageIndex = (currentImageIndex + 1) % currentProjectImages.length;
                 updateModalImage();
             }
@@ -716,14 +834,14 @@
         function openModal(id) {
             const p = DATA.projects.find(x => x.id === id);
             const info = p[DATA.lang];
-            
+
             currentProjectImages = p.images && p.images.length > 0 ? p.images : (p.image ? [p.image] : []);
             currentImageIndex = 0;
             updateModalImage();
-            
+
             document.getElementById('modal-prev').style.display = currentProjectImages.length > 1 ? 'flex' : 'none';
             document.getElementById('modal-next').style.display = currentProjectImages.length > 1 ? 'flex' : 'none';
-            
+
             document.getElementById('modal-cat').innerText = info.cat;
             document.getElementById('modal-title').innerText = info.title;
 
@@ -874,14 +992,14 @@
             const cursor = document.getElementById('cc-main');
             const follower = document.getElementById('cc-follower');
             let mouseX = 0, mouseY = 0, fX = 0, fY = 0;
-            
-            if(window.matchMedia("(pointer: fine)").matches) {
+
+            if (window.matchMedia("(pointer: fine)").matches) {
                 document.addEventListener('mousemove', (e) => {
                     mouseX = e.clientX;
                     mouseY = e.clientY;
                     cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
                 });
-                
+
                 function animateFollower() {
                     fX += (mouseX - fX) * 0.2;
                     fY += (mouseY - fY) * 0.2;
@@ -889,7 +1007,7 @@
                     requestAnimationFrame(animateFollower);
                 }
                 animateFollower();
-                
+
                 // Bind hovers post-render
                 document.querySelectorAll('a, button, .project-card, .skill-card, .chat-toggle, .carousel-btn, .modal-close').forEach(el => {
                     el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
